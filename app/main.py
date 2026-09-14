@@ -15,8 +15,8 @@ import traceback
 from pathlib import Path
 from typing import Any, AsyncIterator
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -28,6 +28,17 @@ from .textutil import clip
 app = FastAPI(title="LLM Wiki", version="0.2.0")
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+
+
+@app.exception_handler(vault.VaultError)
+async def _vault_error_handler(request: Request, exc: vault.VaultError) -> JSONResponse:
+    """路径越界、非法路径等 vault 主动抛出的错误 → 400，而不是 500。
+
+    vault 的路径校验是一道有意设置的防线，被它拒绝说明**请求本身不合法**，
+    不该表现成服务端崩溃（前端只会看到无信息量的 Internal Server Error，
+    日志里却多出一条 traceback）。
+    """
+    return JSONResponse(status_code=400, content={"detail": str(exc)})
 
 
 @app.on_event("startup")
@@ -396,7 +407,8 @@ def _by_kind(pages: list[vault.Page]) -> dict[str, int]:
 
 @app.get("/api/page")
 def get_page(path: str = Query(...)) -> dict[str, Any]:
-    page = vault.read_page(path)
+    # 所有页面接口都先规范化路径，容忍调用方写成 wiki/xxx.md（见 vault.normalize_rel）
+    page = vault.read_page(vault.normalize_rel(path))
     if not page:
         raise HTTPException(status_code=404, detail="页面不存在")
 
@@ -437,7 +449,7 @@ def save_page(payload: PageSaveRequest, path: str = Query(...)) -> dict[str, Any
 
 @app.get("/api/page/raw")
 def get_page_raw(path: str = Query(...)) -> FileResponse:
-    page = vault.read_page(path)
+    page = vault.read_page(vault.normalize_rel(path))
     if not page:
         raise HTTPException(status_code=404, detail="页面不存在")
     return FileResponse(page.path, media_type="text/markdown", filename=page.path.name)
@@ -445,12 +457,13 @@ def get_page_raw(path: str = Query(...)) -> FileResponse:
 
 @app.delete("/api/page")
 def delete_page(path: str = Query(...)) -> dict[str, Any]:
-    if not vault.delete_page(path):
+    rel = vault.normalize_rel(path)
+    if not vault.delete_page(rel):
         raise HTTPException(status_code=404, detail="页面不存在")
     # 页面没了，索引必须跟着重建，否则 index.md 会留下指向已删页面的失效链接
     vault.rebuild_index()
-    vault.append_log("edit", f"删除 {path}（已移入 .trash）")
-    return {"ok": True, "path": path}
+    vault.append_log("edit", f"删除 {rel}（已移入 .trash）")
+    return {"ok": True, "path": rel}
 
 
 @app.get("/api/index")

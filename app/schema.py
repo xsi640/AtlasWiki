@@ -31,6 +31,12 @@ wiki/
 └── analyses/       分析页：对比、综述、结论、专题
 ```
 
+**路径写法**：所有工具（`read_wiki` / `write_wiki` / `edit_wiki` / `append_wiki`）的
+`path` 参数都是**相对 `wiki/` 的路径**，不要带 `wiki/` 前缀：
+
+- ✅ `write_wiki("sources/rag-综述.md", ...)`、`read_wiki("index.md")`
+- ❌ `write_wiki("wiki/sources/rag-综述.md", ...)` —— 会写出 `wiki/wiki/...` 的嵌套目录
+
 # 页面格式
 
 每个页面必须是：
@@ -81,8 +87,8 @@ INGEST_PROMPT = """# 任务：收录一篇新素材
 
 1. **读素材**：`read_raw("{raw_path}")` 读全文。若太长，分段读完关键部分。
 2. **读现状**：`read_wiki("index.md")` 和 `read_wiki("conventions.md")`，了解知识库已有什么。
-3. **写素材页**：在 `wiki/sources/{slug}.md` 写一页素材摘要。包含：核心内容、关键结论、
-   值得记住的数据与细节。frontmatter 里 `sources` 填 `["{raw_path}"]`。
+3. **写素材页**：用 `write_wiki("sources/{slug}.md", ...)` 写一页素材摘要。包含：核心内容、
+   关键结论、值得记住的数据与细节。frontmatter 里 `sources` 填 `["{raw_path}"]`。
 4. **更新实体页与概念页**：从素材里识别出 3-8 个最重要的实体与概念。
    对每一个：
    - 先 `read_wiki("concepts/xxx.md")` 或 `read_wiki("entities/xxx.md")` 看是否已存在
@@ -90,7 +96,7 @@ INGEST_PROMPT = """# 任务：收录一篇新素材
    - 不存在 → 用 `write_wiki` 新建一页
    - 页面之间互相 `[[双链]]`，并链回素材页
 5. **更新索引**：调用 `rebuild_index()` 或直接 `write_wiki("index.md", ...)` 手写更精炼的索引。
-6. **更新总览**：如果这次收录改变了对整体的理解，更新 `wiki/overview.md`。
+6. **更新总览**：如果这次收录改变了对整体的理解，更新 `overview.md`。
 7. **记日志**：`append_log("ingest", "...")`。
 
 完成后用一段话回复：新增/更新了哪些页面、发现了什么值得注意的点。不要输出 Markdown 大段落。
@@ -132,7 +138,7 @@ LINT_PROMPT = """# 任务：知识库健康体检
 工作方式：
 1. `list_wiki()` 看全部页面，`read_wiki("index.md")` 读索引
 2. 挑重点页面读，找出上述问题
-3. 把报告写到 `wiki/analyses/health-check.md`（用 `write_wiki`），
+3. 用 `write_wiki("analyses/health-check.md", ...)` 把报告写进去，
    格式为「问题分类 → 具体条目 → 建议动作」
 4. `append_log("lint", "...")`
 

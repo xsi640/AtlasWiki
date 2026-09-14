@@ -135,7 +135,21 @@ def _safe_path(rel_path: str) -> Path:
 
 
 def normalize_rel(rel_path: str) -> str:
+    """把模型给的路径规范成「相对 wiki/ 的 .md 路径」。
+
+    工具收到的路径一律相对 `wiki/`。但模型经常会把 `wiki/` 前缀写进来
+    （SCHEMA 提示词里就是用 `wiki/sources/x.md` 这种写法描述的），
+    不去掉的话会写出 `wiki/wiki/sources/x.md` 这种**影子目录树**，
+    而且 `kind_of()` 会把 `wiki` 当成目录名、把页面判成 root，
+    页面从此既不进分类也不被当成素材页。这里统一剥掉前缀兜底。
+    """
     rel = (rel_path or "").strip().lstrip("/").replace("\\", "/")
+    while rel.startswith("./"):
+        rel = rel[2:]
+    if rel == "wiki":
+        rel = ""
+    elif rel.startswith("wiki/"):
+        rel = rel[len("wiki/"):]
     if not rel.endswith(".md"):
         rel += ".md"
     return rel
