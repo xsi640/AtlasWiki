@@ -14,6 +14,14 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// 只放行 http(s)。markdown 渲染器里的链接已经这么限制了，
+// 这里补上是为了让所有 href 走同一套规则 —— escapeHtml 挡得住属性注入，
+// 但挡不住 `javascript:` 这类危险协议。
+function safeUrl(u) {
+  const s = String(u == null ? '' : u).trim();
+  return /^https?:\/\//i.test(s) ? s : '';
+}
+
 let toastTimer = null;
 function toast(msg, kind = '') {
   const node = $('#toast');
@@ -1157,7 +1165,7 @@ async function viewRaw(path) {
         <div class="page-meta">
           <span class="kind-chip">原始素材 · 只读</span>
           <span>${escapeHtml(path)}</span>
-          ${fm.source_url ? `<span>·</span><a href="${escapeHtml(fm.source_url)}" target="_blank" rel="noreferrer">原链接 ↗</a>` : ''}
+          ${safeUrl(fm.source_url) ? `<span>·</span><a href="${escapeHtml(safeUrl(fm.source_url))}" target="_blank" rel="noreferrer">原链接 ↗</a>` : ''}
           <span class="spacer"></span>
           <button class="btn btn-sm" id="raw-compile">编译进 wiki</button>
         </div>
