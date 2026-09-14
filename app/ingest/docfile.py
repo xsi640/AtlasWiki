@@ -11,7 +11,9 @@ import re
 import shutil
 import subprocess
 import tempfile
+from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from ..textutil import clean_markdown, html_to_markdown, join_nonempty, strip_markdown
 from .common import IngestError, IngestResult
@@ -181,7 +183,32 @@ def _legacy_doc_text(path: Path) -> tuple[str, str]:
 # PDF
 # --------------------------------------------------------------------------- #
 
-def _pdf_to_text(path: Path) -> tuple[str, int]:
+def _pdf_meta(reader: Any) -> dict[str, str]:
+    """PDF 文档属性里的作者与创建日期。
+
+    pypdf 会把 /CreationDate 解析成 datetime；畸形 PDF 上属性访问本身也可能抛错，
+    所以整体包一层。
+    """
+    try:
+        meta = reader.metadata
+    except Exception:
+        return {}
+    if not meta:
+        return {}
+
+    def read(name: str) -> str:
+        try:
+            value = getattr(meta, name, None)
+        except Exception:
+            return ""
+        if isinstance(value, datetime):
+            return value.strftime("%Y-%m-%d")
+        return str(value or "").strip()
+
+    return {"title": read("title"), "author": read("author"), "created": read("creation_date")}
+
+
+def _pdf_to_text(path: Path) -> tuple[str, int, dict[str, str]]:
     try:
         from pypdf import PdfReader  # type: ignore
     except Exception as exc:  # pragma: no cover
@@ -197,8 +224,7 @@ def _pdf_to_text(path: Path) -> tuple[str, int]:
         text = re.sub(r"[ \t]+", " ", text).strip()
         if text:
             pages.append(f"### 第 {index} 页\n{text}")
-    info = reader.metadata or {}
-    return "\n\n".join(pages), len(reader.pages)
+    return "\n\n".join(pages), len(reader.pages), _pdf_meta(reader)
 
 
 # --------------------------------------------------------------------------- #
@@ -225,9 +251,15 @@ def extract(path: Path, original_name: str = "") -> IngestResult:
         markdown = clean_markdown(text)
         raw_meta["converter"] = tool
     elif ext in PDF_EXT:
-        text, page_count = _pdf_to_text(path)
+        text, page_count, pdf_meta = _pdf_to_text(path)
         markdown = clean_markdown(text)
         raw_meta["pages"] = page_count
+        # 作者与日期取自文档属性。标题**不覆盖**文件名：PDF 的 /Title 通常由生成
+        # 工具写入（常见「Microsoft Word - draft3.docx」这类），不如用户自己起的
+        # 文件名可靠；原值仍记进 raw_meta 供参考。
+        author = pdf_meta.get("author", "")
+        published = pdf_meta.get("created", "")
+        raw_meta["pdf_title"] = pdf_meta.get("title", "")
         if len(strip_markdown(markdown)) < 200 and page_count > 0:
             warnings.append("该 PDF 可能是扫描件，未能提取到文字（需要 OCR）")
     elif ext in HTML_EXT:

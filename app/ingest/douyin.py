@@ -14,6 +14,7 @@ import re
 import urllib.parse
 from typing import Any
 
+from .. import config
 from ..textutil import join_nonempty
 from .common import (
     IngestError,
@@ -32,11 +33,12 @@ SHORT_HOSTS = ("v.douyin.com", "www.iesdouyin.com/share", "iesdouyin.com/share")
 
 def matches(text: str) -> bool:
     lowered = text.lower()
+    # 括号不能省：`and` 的优先级高于 `or`，不加括号时读者无法判断意图，
+    # 后续改动也容易把语义改错。这里的意图是「域名直接命中，或提到抖音且带链接」。
     return (
         "douyin.com" in lowered
         or "iesdouyin.com" in lowered
-        or "抖音" in text
-        and URL_RE.search(text) is not None
+        or ("抖音" in text and URL_RE.search(text) is not None)
     )
 
 
@@ -104,8 +106,6 @@ def _from_html(url: str) -> tuple[dict[str, Any], str]:
 
 
 def extract(url_or_text: str, share_text: str = "") -> IngestResult:
-    from .. import config
-
     url = _extract_url(url_or_text)
     if any(host in url for host in SHORT_HOSTS) or "v.douyin.com" in url:
         url = _expand(url)

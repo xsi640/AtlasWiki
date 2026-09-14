@@ -6,8 +6,10 @@ import json
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -118,7 +120,7 @@ def _ytdlp_cmd() -> list[str]:
     binary = shutil.which("yt-dlp")
     if binary:
         return [binary]
-    return [str(Path(__import__("sys").executable)), "-m", "yt_dlp"]
+    return [str(Path(sys.executable)), "-m", "yt_dlp"]
 
 
 def ytdlp_metadata(url: str, timeout: int | None = None) -> dict[str, Any]:
@@ -235,7 +237,6 @@ def human_duration(seconds: int | float | None) -> str:
 def timestamp_to_date(ts: int | float | None) -> str:
     if not ts:
         return ""
-    from datetime import datetime
     try:
         return datetime.fromtimestamp(int(ts)).strftime("%Y-%m-%d")
     except Exception:

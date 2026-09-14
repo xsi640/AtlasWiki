@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from .. import config
 from ..textutil import join_nonempty
 from .common import (
     IngestError,
@@ -113,8 +114,6 @@ def _fetch_subtitle(bvid: str, cid: int, cookie: str) -> str:
 
 
 def extract(url_or_text: str, share_text: str = "") -> IngestResult:
-    from .. import config
-
     cookie = config.load_config()["fetch"].get("bilibili_cookie", "")
     query, canonical_url = _resolve_target(url_or_text)
     warnings: list[str] = []
@@ -173,7 +172,9 @@ def extract(url_or_text: str, share_text: str = "") -> IngestResult:
         uname = ((reply.get("member") or {}).get("uname") or "").strip()
         like = reply.get("like") or 0
         if message:
-            comments.append(f"- **{uname}**（{like} 赞）：{message.replace(chr(10), ' ')}")
+            # 评论里可能带换行，压成空格才能保持「一条一行」
+            flat = re.sub(r"\s+", " ", message)
+            comments.append(f"- **{uname}**（{like} 赞）：{flat}")
 
     # 分P
     parts: list[str] = []

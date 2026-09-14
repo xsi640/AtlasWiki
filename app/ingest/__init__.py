@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -168,7 +169,7 @@ def save_to_raw(result: IngestResult) -> str:
         "published_at": result.published_at,
         "cover_url": result.cover_url,
         "tags": result.tags,
-        "captured_at": __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "captured_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
     meta.update({k: v for k, v in (result.raw_meta or {}).items() if k not in meta and v not in (None, "", [], {})})
     return vault.save_raw(name, result.content_md, meta)
