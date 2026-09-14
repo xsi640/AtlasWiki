@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Wiki · 个人知识库</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand" id="brand">
+      <span class="brand-mark">W</span>
+      <span class="brand-text">
+        <strong>LLM Wiki</strong>
+        <em id="vault-path">加载中…</em>
+      </span>
+    </div>
+
+    <div class="search-wrap">
+      <input id="global-search" type="search" placeholder="搜索 wiki 全文（回车）" autocomplete="off">
+      <div id="search-panel" class="search-panel hidden"></div>
+    </div>
+
+    <div class="topbar-actions">
+      <span id="llm-badge" class="badge badge-muted">检查中…</span>
+      <button class="btn btn-primary" data-nav="ingest">＋ 收录</button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <nav class="nav">
+      <a class="nav-item" data-nav="home"><i>◇</i>总览</a>
+      <a class="nav-item" data-nav="ingest"><i>＋</i>收录素材</a>
+      <a class="nav-item" data-nav="ask"><i>?</i>提问</a>
+      <a class="nav-item" data-nav="graph"><i>⁂</i>链接图谱</a>
+      <a class="nav-item" data-nav="lint"><i>!</i>健康体检</a>
+      <a class="nav-item" data-nav="settings"><i>⚙</i>设置</a>
+    </nav>
+
+    <div class="sidebar-section">
+      <div class="section-head">
+        <span>知识库页面</span>
+        <span id="page-total" class="muted"></span>
+      </div>
+      <div id="page-tree" class="page-tree"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-head">
+        <span>原始素材 raw/</span>
+        <span id="raw-total" class="muted"></span>
+      </div>
+      <div id="raw-list" class="raw-list"></div>
+    </div>
+  </aside>
+
+  <main id="main" class="main"></main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="/app.js"></script>
+</body>
+</html>
