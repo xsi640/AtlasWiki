@@ -93,25 +93,25 @@ Wave 0 完成后，以 Wave 1 的最小切片构成闭环：
 
 | 任务编号 | 任务名称 | 模块 | 依赖项 | 验收标准 | 状态 |
 |---|---|---|---|---|---|
-| TASK-026 | 问答引擎 | MODULE-005 | TASK-013, TASK-021 | 提问能选取候选页并跨页综合作答；答案中引用为真实存在的页面名，`citations` 与实际参与页面一致；`pages_considered` 为实际读取页数；知识不足时 `sufficient = false` 并给出最多 5 个相关页（不编造答案）；答案落 `queries.json` 并可回放 | 待处理 |
-| TASK-027 | 问答 API 与答案回填 | MODULE-005 | TASK-026 | API-028 ~ API-032 可用；回填生成的新页面 `source_type = query-generated`、`type = analysis`、落在 `wiki/analyses/`；回填后原记录 `saved_page` 非空（TASK-TBD-005）；重复回填同一答案不被允许或幂等；删除问答后历史列表与详情一致 | 待处理 |
-| TASK-028 | 前端 PAGE-001 首页问答台与 PAGE-009 历史页 | MODULE-004 | TASK-002, TASK-027 | 输入为空时不可提交；提交后显示「正在综合 N 个页面」（N 来自 `pages_considered`）；引用可点击跳转（SC-1a）；「存为页面」为次要入口且不打断主流程；`sufficient = false` 时显示 STATE-011 并列出相关页；历史页列表 + 单条展开 + 单条删除（幽灵按钮 + 危险色）；已归档条目显示标记；空库时整页替换为 PAGE-002 内容 | 待处理 |
+| TASK-026 | 问答引擎 | MODULE-005 | TASK-013, TASK-021 | 提问能选取候选页并跨页综合作答；答案中引用为真实存在的页面名，`citations` 与实际参与页面一致；`pages_considered` 为实际读取页数；知识不足时 `sufficient = false` 并给出最多 5 个相关页（不编造答案）；答案落 `queries.json` 并可回放 | 已完成 |
+| TASK-027 | 问答 API 与答案回填 | MODULE-005 | TASK-026 | API-028 ~ API-032 可用；回填生成的新页面 `source_type = query-generated`、`type = analysis`、落在 `wiki/analyses/`；回填后原记录 `saved_page` 非空（TASK-TBD-005）；重复回填同一答案不被允许或幂等；删除问答后历史列表与详情一致 | 已完成 |
+| TASK-028 | 前端 PAGE-001 首页问答台与 PAGE-009 历史页 | MODULE-004 | TASK-002, TASK-027 | 输入为空时不可提交；提交后显示「正在综合 N 个页面」（N 来自 `pages_considered`）；引用可点击跳转（SC-1a）；「存为页面」为次要入口且不打断主流程；`sufficient = false` 时显示 STATE-011 并列出相关页；历史页列表 + 单条展开 + 单条删除（幽灵按钮 + 危险色）；已归档条目显示标记；空库时整页替换为 PAGE-002 内容 | 已完成 |
 
 ### Wave 4 · Lint
 
 | 任务编号 | 任务名称 | 模块 | 依赖项 | 验收标准 | 状态 |
 |---|---|---|---|---|---|
-| TASK-029 | 体检扫描五类检查 | MODULE-006 | TASK-021, TASK-022 | 矛盾、孤儿页、失效链接、缺失索引、分区混杂五类都能检出（构造含全部五类的样本 vault 断言命中）；`repairable` 判定正确（结构性为 true，语义类为 false）；扫描为只读，不修改任何页面；孤儿页占比与平均出链可计算（对应 SC-3） | 待处理 |
-| TASK-030 | 体检 API、触发与修复 | MODULE-006 | TASK-004, TASK-029 | API-033 ~ API-036 可用；启动时触发一次、闲置 30 分钟后触发一次（不得引入定时调度器）；报告落 `.llmwiki/lint-report.json` 而非 wiki 页面；修复只改结构性条目且**不覆盖** `human_edited` 页面（改为标注需人工处理）；忽略必须带原因，缺原因返回 `E_VALIDATION`；`counts.total` 与 `groups` 实际条目数一致 | 待处理 |
-| TASK-031 | 前端 PAGE-011 体检报告页与待处理提醒 | MODULE-004 | TASK-002, TASK-030 | 五类分组展示且逐条可勾选；`repairable = false` 的条目只允许忽略；忽略时强制填写原因（INTERACTION-023 / UX-TBD-003）；页头常驻「自动生成但不会自动修复」（UX-AC-005）；右栏列出已忽略项与原因可回查；导航栏常驻「N 个待处理」并在修复/忽略后即时更新（CONTENT-006）；无待处理项时显示 STATE-008 | 待处理 |
+| TASK-029 | 体检扫描五类检查 | MODULE-006 | TASK-021, TASK-022 | 矛盾、孤儿页、失效链接、缺失索引、分区混杂五类都能检出（构造含全部五类的样本 vault 断言命中）；`repairable` 判定正确（结构性为 true，语义类为 false）；扫描为只读，不修改任何页面；孤儿页占比与平均出链可计算（对应 SC-3） | 已完成 |
+| TASK-030 | 体检 API、触发与修复 | MODULE-006 | TASK-004, TASK-029 | API-033 ~ API-036 可用；启动时触发一次、闲置 30 分钟后触发一次（不得引入定时调度器）；报告落 `.llmwiki/lint-report.json` 而非 wiki 页面；修复只改结构性条目且**不覆盖** `human_edited` 页面（改为标注需人工处理）；忽略必须带原因，缺原因返回 `E_VALIDATION`；`counts.total` 与 `groups` 实际条目数一致 | 已完成 |
+| TASK-031 | 前端 PAGE-011 体检报告页与待处理提醒 | MODULE-004 | TASK-002, TASK-030 | 五类分组展示且逐条可勾选；`repairable = false` 的条目只允许忽略；忽略时强制填写原因（INTERACTION-023 / UX-TBD-003）；页头常驻「自动生成但不会自动修复」（UX-AC-005）；右栏列出已忽略项与原因可回查；导航栏常驻「N 个待处理」并在修复/忽略后即时更新（CONTENT-006）；无待处理项时显示 STATE-008 | 已完成 |
 
 ### Wave 5 · 设置与收尾
 
 | 任务编号 | 任务名称 | 模块 | 依赖项 | 验收标准 | 状态 |
 |---|---|---|---|---|---|
-| TASK-032 | 设置、成本与系统 API | MODULE-009, MODULE-008 | TASK-005, TASK-006 | API-001 ~ API-003、API-037 ~ API-042 可用；API key 只回显末 4 位、永不返回完整值；`test-connection` 能区分鉴权失败与超时；成本看板按日/按操作统计与 `costs.json` 一致；`pricing_source` 正确反映内置或自定义；打开数据文件夹能实际唤起系统文件管理器 | 待处理 |
-| TASK-033 | 前端 PAGE-012 设置页 | MODULE-004 | TASK-002, TASK-032 | provider / base_url / 模型 / key / 限额可配置并保存生效；成本看板展示累计、按日、按操作；「打开数据文件夹」为页内主按钮（G-7 / UX-AC-008）；git 远端、分支、SSH key 可配置并可手动同步；同步失败展示 git 输出；深浅主题可切换且浅色为默认（UI-TBD-003） | 待处理 |
-| TASK-034 | 启动脚本与部署说明 | 公共 | TASK-001, TASK-002 | `code/scripts/start.ps1` 能检查 `dist` 缺失并给出提示、启动服务、打印实际地址；端口占用时自动顺延并打印新端口；`code/deploy/` 含环境要求、启动方式、故障排查；在干净环境下按文档操作能成功启动 | 待处理 |
+| TASK-032 | 设置、成本与系统 API | MODULE-009, MODULE-008 | TASK-005, TASK-006 | API-001 ~ API-003、API-037 ~ API-042 可用；API key 只回显末 4 位、永不返回完整值；`test-connection` 能区分鉴权失败与超时；成本看板按日/按操作统计与 `costs.json` 一致；`pricing_source` 正确反映内置或自定义；打开数据文件夹能实际唤起系统文件管理器 | 已完成 |
+| TASK-033 | 前端 PAGE-012 设置页 | MODULE-004 | TASK-002, TASK-032 | provider / base_url / 模型 / key / 限额可配置并保存生效；成本看板展示累计、按日、按操作；「打开数据文件夹」为页内主按钮（G-7 / UX-AC-008）；git 远端、分支、SSH key 可配置并可手动同步；同步失败展示 git 输出；深浅主题可切换且浅色为默认（UI-TBD-003） | 已完成 |
+| TASK-034 | 启动脚本与部署说明 | 公共 | TASK-001, TASK-002 | `code/scripts/start.ps1` 能检查 `dist` 缺失并给出提示、启动服务、打印实际地址；端口占用时自动顺延并打印新端口；`code/deploy/` 含环境要求、启动方式、故障排查；在干净环境下按文档操作能成功启动 | 已完成 |
 | TASK-035 | 端到端验证脚本 | 公共 | TASK-016, TASK-023, TASK-028, TASK-031, TASK-033 | 脚本可独立完成：建临时 vault → 启动服务 → 导入三类素材之一 → 编译 → 断言 wiki 出现页面与索引 → 提问并断言引用页真实存在 → 跑体检并断言五类检查可执行 → 关闭服务 → 清理；失败时打印服务端日志尾部；退出码非 0 表示失败；重复执行不残留状态（幂等） | 待处理 |
 | TASK-036 | 忽略规则、文档回填与收尾 | 公共 | TASK-035 | `.gitignore` 覆盖 `.venv`/`node_modules`/`dist`/`.llmwiki` 的运行期垃圾但不忽略知识内容；仓库内无 API key；`implementation-record.md` 记录实现过程与集成阶段缺陷；`tasks.md` 状态全部回填；无临时文件残留 | 待处理 |
 
