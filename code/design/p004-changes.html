@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-004 变更清单页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.summary { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp-4); margin-bottom:var(--sp-6); }
+.sum { padding:var(--sp-5); }
+.sum-v { font-size:var(--fs-display); font-weight:500; letter-spacing:-.5px; }
+.sum-k { font-size:var(--fs-meta); color:var(--text-3); }
+.change-row { padding:var(--sp-4) var(--sp-5); border-bottom:1px solid var(--border); }
+.change-head { display:flex; align-items:center; gap:var(--sp-3); }
+.diff { font-family:var(--font-mono); font-size:var(--fs-meta); line-height:1.75; background:var(--code-bg); border-radius:var(--r-sm); padding:var(--sp-3) var(--sp-4); margin-top:var(--sp-3); border:1px solid var(--border); }
+.diff .add { color:var(--success); }
+.diff .del { color:var(--danger); }
+.diff .ctx { color:var(--text-3); }
+.newgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--sp-4); }
+.newcard { padding:var(--sp-5); }
+.newcard h4 { margin:0 0 6px; font-size:var(--fs-h3); font-weight:500; }
+.zone-row { display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-5); border-bottom:1px solid var(--border); }
+.zone-arrow { color:var(--text-3); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <h1 class="page-title">这次改动</h1>
+    <p class="page-sub">《Textbooks Are All You Need》已编译完成 · 用时 4 分 12 秒 · 花费 ¥1.06</p>
+
+    <div class="summary">
+      <div class="card sum"><div class="sum-v">7</div><div class="sum-k">被更新的页面</div></div>
+      <div class="card sum"><div class="sum-v">3</div><div class="sum-k">新建页面</div></div>
+      <div class="card sum"><div class="sum-v">14</div><div class="sum-k">新增 / 修复链接</div></div>
+      <div class="card sum"><div class="sum-v" style="color:var(--warning)">1</div><div class="sum-k">标记的矛盾</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">改了哪些页面</div><span class="tiny">点任意一行看 diff</span></div>
+      <div class="change-row">
+        <div class="change-head">
+          <span class="badge badge-accent">更新</span>
+          <span class="row-title">合成数据质量</span>
+          <span class="tag">synthetic-data.md</span>
+          <span class="row-meta">+18 / −3</span>
+        </div>
+        <div class="diff">
+          <div class="ctx">## 去重阈值的实证结论</div>
+          <div class="del">− 早期实验认为阈值取 0.8 即可。</div>
+          <div class="add">+ phi 系列论文给出更严格的标准：0.9 以上才算重复。</div>
+          <div class="add">+ 注意：本页与「教科书数据」页的取值存在冲突，已标记待体检。</div>
+        </div>
+      </div>
+      <div class="change-row">
+        <div class="change-head">
+          <span class="badge badge-accent">更新</span>
+          <span class="row-title">数据工程</span>
+          <span class="tag">data-curation.md</span>
+          <span class="row-meta">+6 / −0</span>
+        </div>
+      </div>
+      <div class="change-row">
+        <div class="change-head">
+          <span class="badge badge-accent">更新</span>
+          <span class="row-title">上下文工程</span>
+          <span class="tag">context-engineering.md</span>
+          <span class="row-meta">+4 / −1</span>
+        </div>
+      </div>
+      <div class="change-row">
+        <div class="change-head">
+          <span class="badge">仅补链接</span>
+          <span class="row-title">注意力机制</span>
+          <span class="tag">attention.md</span>
+          <span class="row-meta">+2 链接</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">新生成的页面</div>
+    <div class="newgrid">
+      <div class="card newcard">
+        <div class="badge badge-primary" style="margin-bottom:8px">概念页</div>
+        <h4>教科书式合成数据</h4>
+        <p class="tiny">定义、生成流程、质量上限，以及与普通网页语料的对比。</p>
+        <div class="btn-row"><div class="btn btn-sm">打开页面</div></div>
+      </div>
+      <div class="card newcard">
+        <div class="badge badge-primary" style="margin-bottom:8px">概念页</div>
+        <h4>去重阈值</h4>
+        <p class="tiny">不同论文给出的取值差异，已标记冲突。</p>
+        <div class="btn-row"><div class="btn btn-sm">打开页面</div></div>
+      </div>
+      <div class="card newcard">
+        <div class="badge badge-primary" style="margin-bottom:8px">实体页</div>
+        <h4>Microsoft Phi</h4>
+        <p class="tiny">模型家族、训练语料规模、关键结论。</p>
+        <div class="btn-row"><div class="btn btn-sm">打开页面</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">被分到了哪个区</div>
+    <div class="card">
+      <div class="zone-row">
+        <span class="row-title">教科书式合成数据</span>
+        <span class="zone-arrow">→</span>
+        <span class="badge badge-success">训练数据</span>
+        <span class="tiny">自动判定 · 置信度高</span>
+        <div style="margin-left:auto" class="btn-row"><div class="btn btn-ghost btn-sm">改到别的区</div></div>
+      </div>
+      <div class="zone-row">
+        <span class="row-title">去重阈值</span>
+        <span class="zone-arrow">→</span>
+        <span class="badge badge-success">训练数据</span>
+        <span class="tiny">自动判定 · 置信度高</span>
+        <div style="margin-left:auto" class="btn-row"><div class="btn btn-ghost btn-sm">改到别的区</div></div>
+      </div>
+      <div class="zone-row">
+        <span class="row-title">Microsoft Phi</span>
+        <span class="zone-arrow">→</span>
+        <span class="badge badge-warning">模型与方法</span>
+        <span class="tiny">自动判定 · 置信度中，建议确认</span>
+        <div style="margin-left:auto" class="btn-row"><div class="btn btn-sm">确认分区</div><div class="btn btn-ghost btn-sm">改到别的区</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="section-label">已提交到 git</div>
+    <div class="card card-pad">
+      <div class="tiny mono" style="line-height:1.9">
+        <div>commit a91f3c2</div>
+        <div style="color:var(--text-3)">compiling: textbooks-are-all-you-need</div>
+        <div style="color:var(--text-3)">7 files changed, 3 new</div>
+      </div>
+      <div class="divider"></div>
+      <div class="btn btn-sm">在文件夹中查看</div>
+    </div>
+    <div class="section-label">发现的矛盾（体检时处理）</div>
+    <div class="card card-pad">
+      <div style="font-size:var(--fs-sm);font-weight:500">去重阈值取值冲突</div>
+      <div class="tiny" style="margin-top:6px">「教科书数据」0.8 vs 「合成数据质量」0.9</div>
+      <div class="btn-row" style="margin-top:12px"><div class="btn btn-ghost btn-sm">稍后在体检报告看</div></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-011 体检报告页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.summary { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp-4); margin-bottom:var(--sp-6); }
+.sum { padding:var(--sp-5); }
+.sum-v { font-size:var(--fs-display); font-weight:500; letter-spacing:-.5px; }
+.sum-k { font-size:var(--fs-meta); color:var(--text-3); }
+
+.grp-head { display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) var(--sp-5); background:var(--bg-subtle); border-bottom:1px solid var(--border); }
+.grp-title { font-size:var(--fs-sm); font-weight:500; }
+.grp-count { color:var(--text-3); font-size:var(--fs-meta); }
+
+.item { display:flex; gap:var(--sp-3); padding:var(--sp-4) var(--sp-5); border-bottom:1px solid var(--border); align-items:flex-start; }
+.item:last-child { border-bottom:none; }
+.item:hover { background:var(--surface-2); }
+.item.on { background:var(--primary-soft); }
+.chk { width:18px;height:18px;border-radius:4px;border:1px solid var(--border-strong); background:var(--surface); display:grid;place-items:center; flex:none; margin-top:2px; color:var(--primary-text); font-size:11px; }
+.chk.on { background:var(--primary); border-color:var(--primary); color:#fff; }
+html[data-theme="dark"] .chk.on { color:var(--primary-text); }
+.item-body { flex:1; min-width:0; }
+.item-title { font-size:var(--fs-sm); font-weight:500; }
+.item-desc { font-size:var(--fs-meta); color:var(--text-2); margin-top:4px; line-height:1.7; }
+.item-pages { margin-top:var(--sp-2); display:flex; flex-wrap:wrap; gap:var(--sp-2); align-items:center; }
+.item-ops { flex:none; text-align:right; }
+.suggest { font-size:var(--fs-caption); color:var(--accent); }
+
+.ignore-box { margin-top:var(--sp-3); padding:var(--sp-3); border:1px solid var(--warning); background:var(--warning-soft); border-radius:var(--r-md); }
+@media (max-width:1151px) {
+  .summary { grid-template-columns:repeat(2,1fr); }
+  .item { flex-wrap:wrap; }
+  .item-ops { width:100%; text-align:left; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <div class="btn-row" style="justify-content:space-between;align-items:flex-end;margin-bottom:var(--sp-5)">
+      <div>
+        <h1 class="page-title" style="margin:0">体检报告</h1>
+        <p class="page-sub" style="margin:4px 0 0">上次体检 26 分钟前 · 覆盖 128 个页面 / 412 条链接</p>
+      </div>
+      <div class="badge badge-success"><span class="dot"></span>自动生成，但不会自动修复</div>
+    </div>
+
+    <div class="summary">
+      <div class="card sum"><div class="sum-v">7</div><div class="sum-k">待处理</div></div>
+      <div class="card sum"><div class="sum-v" style="color:var(--danger)">2</div><div class="sum-k">内容矛盾</div></div>
+      <div class="card sum"><div class="sum-v" style="color:var(--warning)">3</div><div class="sum-k">孤儿页</div></div>
+      <div class="card sum"><div class="sum-v" style="color:var(--warning)">2</div><div class="sum-k">失效链接</div></div>
+    </div>
+
+    <div class="toolbar" style="margin-bottom:var(--sp-5)">
+      <span class="tiny">已选 <b>2</b> 项</span>
+      <div class="btn btn-sm btn-primary">修复所选</div>
+      <div class="btn btn-sm">忽略（需填原因）</div>
+      <div style="margin-left:auto" class="tiny">修复会重跑相关页面，并产出一份变更清单</div>
+    </div>
+
+    <!-- 分组 1：内容矛盾 -->
+    <div class="card" style="margin-bottom:var(--sp-6);overflow:hidden">
+      <div class="grp-head">
+        <span class="grp-title">内容矛盾</span><span class="grp-count">2</span>
+        <span style="margin-left:auto" class="tiny">同一事实在两处被写成不同样子</span>
+      </div>
+
+      <div class="item on">
+        <div class="chk on">✓</div>
+        <div class="item-body">
+          <div class="item-title">「去重阈值」的取值两处不一致</div>
+          <div class="item-desc">一处写「0.8 以上算重复」，另一处引 phi 论文写「0.9 以上才算」。两者相差一次参数复查的距离。</div>
+          <div class="item-pages">
+            <span class="tiny">涉及</span>
+            <a class="wikilink" href="#">合成数据质量</a>
+            <span class="tiny">·</span>
+            <a class="wikilink" href="#">去重策略</a>
+            <span class="tiny">·</span>
+            <a class="wikilink" href="#">Textbooks Are All You Need</a>
+          </div>
+          <div class="ignore-box">
+            <div class="field-label" style="color:var(--warning)">选择「忽略」时必须填写原因</div>
+            <input class="input" placeholder="例如：两处引用的是论文的不同版本，保留两种说法是故意的">
+            <div class="btn-row" style="margin-top:var(--sp-3)">
+              <div class="btn btn-sm">确认忽略</div>
+              <div class="btn btn-sm btn-ghost">取消</div>
+            </div>
+          </div>
+        </div>
+        <div class="item-ops"><div class="suggest">建议：以 phi 论文为准，统一到 0.9</div></div>
+      </div>
+
+      <div class="item">
+        <div class="chk"></div>
+        <div class="item-body">
+          <div class="item-title">「涌现能力」是否为假象，结论相反</div>
+          <div class="item-desc">「Are Emergent Abilities a Mirage」认为 evaluator 选择造成假象；另一页沿用了原论文的说法。</div>
+          <div class="item-pages">
+            <span class="tiny">涉及</span>
+            <a class="wikilink" href="#">涌现能力</a>
+            <span class="tiny">·</span>
+            <a class="wikilink" href="#">评测口径</a>
+          </div>
+        </div>
+        <div class="item-ops"><div class="suggest">建议：两说并陈，并标注分歧来源</div></div>
+      </div>
+    </div>
+
+    <!-- 分组 2：孤儿页 -->
+    <div class="card" style="margin-bottom:var(--sp-6);overflow:hidden">
+      <div class="grp-head">
+        <span class="grp-title">孤儿页</span><span class="grp-count">3</span>
+        <span style="margin-left:auto" class="tiny">没有任何页面链接到它，等于被知识网遗忘</span>
+      </div>
+      <div class="item">
+        <div class="chk on">✓</div>
+        <div class="item-body">
+          <div class="item-title">课程式学习</div>
+          <div class="item-desc">入链 0 · 上次由 LLM 生成，之后没有任何页面引用它</div>
+        </div>
+        <div class="item-ops"><div class="suggest">建议：接上「训练顺序」，或问能否合并</div></div>
+      </div>
+      <div class="item">
+        <div class="chk"></div>
+        <div class="item-body">
+          <div class="item-title">注意力稀疏化</div>
+          <div class="item-desc">入链 0 · 来自一份素材，但相关内容都指向了「注意力机制」</div>
+        </div>
+        <div class="item-ops"><div class="suggest">建议：合入「注意力机制」</div></div>
+      </div>
+      <div class="item">
+        <div class="chk"></div>
+        <div class="item-body">
+          <div class="item-title">评测污染</div>
+          <div class="item-desc">入链 0 · 有实体内容但尚无关联概念</div>
+        </div>
+        <div class="item-ops"><div class="suggest">建议：等下一次摄入时再判断</div></div>
+      </div>
+    </div>
+
+    <!-- 分组 3：失效链接 -->
+    <div class="card" style="margin-bottom:var(--sp-6);overflow:hidden">
+      <div class="grp-head">
+        <span class="grp-title">失效链接</span><span class="grp-count">2</span>
+        <span style="margin-left:auto" class="tiny">指向已被软删除的素材</span>
+      </div>
+      <div class="item">
+        <div class="chk on">✓</div>
+        <div class="item-body">
+          <div class="item-title">3 条链接指向已删除素材</div>
+          <div class="item-desc">「phi-1 技术报告（旧文件）」已于 2 天前删除，它派生的页面仍有入链指向它。</div>
+          <div class="item-pages"><span class="tiny">涉及</span><a class="wikilink" href="#">phi-1</a><span class="tiny">·</span><a class="wikilink" href="#">代码模型评测</a><span class="tiny">·</span><a class="wikilink" href="#">教科书数据</a></div>
+        </div>
+        <div class="item-ops"><div class="suggest">建议：移除链接，或恢复素材</div></div>
+      </div>
+      <div class="item">
+        <div class="chk"></div>
+        <div class="item-body">
+          <div class="item-title">1 条链接指向改名后的页面</div>
+          <div class="item-desc">目标页面已被改名，链接仍指向旧标题。</div>
+        </div>
+        <div class="item-ops"><div class="suggest">建议：自动重定向</div></div>
+      </div>
+    </div>
+
+    <!-- 分组 4：无问题 -->
+    <div class="card">
+      <div class="grp-head">
+        <span class="grp-title">缺失索引</span><span class="grp-count">0</span>
+        <span style="margin-left:auto"><span class="badge badge-success"><span class="dot"></span>通过</span></span>
+      </div>
+      <div class="item">
+        <div class="item-body" style="padding-left:33px">
+          <div class="item-desc">所有分区都有可读的 <span class="tag">index.md</span>，导航链完整。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <div class="card-head"><div class="card-title">体检什么时候跑</div></div>
+      <div class="card-pad" style="font-size:var(--fs-meta);color:var(--text-2);line-height:1.9">
+        <div>· 应用启动时跑一次</div>
+        <div>· 闲置 30 分钟后跑一次</div>
+        <div>· 摄入完成后<b>不跑</b>，避免刚写完就报错</div>
+        <div class="divider"></div>
+        <div class="tiny">上次：26 分钟前 · 用时 41 秒</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-head"><div class="card-title">已忽略</div><span class="count-pill">3</span></div>
+      <div class="card-pad" style="padding-top:var(--sp-2);padding-bottom:var(--sp-2)">
+        <div class="derived-row" style="border:none;padding:8px 0">
+          <div class="item-title" style="font-size:var(--fs-meta)">术语中英不统一</div>
+          <div class="tiny">原因：中英并列是刻意设计 U-10</div>
+        </div>
+        <div class="derived-row" style="border:none;padding:8px 0">
+          <div class="item-title" style="font-size:var(--fs-meta)">来源摘要页互链不足</div>
+          <div class="tiny">原因：摘要页本就不该互链</div>
+        </div>
+        <div class="derived-row" style="border:none;padding:8px 0">
+          <div class="item-title" style="font-size:var(--fs-meta)">概念页缺少代码样例</div>
+          <div class="tiny">原因：V1 不要求，延后处理</div>
+        </div>
+        <div class="divider"></div>
+        <div class="btn btn-sm btn-ghost">查看全部忽略原因</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-pad">
+        <div class="callout">
+          <b>体检只给建议。</b>在你勾选并点「修复所选」之前，它不会改动任何一个页面。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

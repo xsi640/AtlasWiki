@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-007 分区浏览页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+/* 左栏：分区导航。宽档竖向列表，S 档转横向滚动条（它承载寻路职责，不能隐藏） */
+.zone-nav { display:flex; flex-direction:column; gap:2px; }
+.zone-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:var(--r-sm); color:var(--text-2); font-size:var(--fs-sm); }
+.zone-item:hover { background:var(--surface-2); }
+.zone-item.on { background:var(--primary-soft); color:var(--primary); }
+.zone-item .c { margin-left:auto; color:var(--text-3); font-size:var(--fs-caption); }
+.zone-item.on .c { color:var(--primary); }
+.zone-dot { width:7px;height:7px;border-radius:50%; background:var(--border-strong); flex:none; }
+.zone-item.on .zone-dot { background:var(--primary); }
+
+.pagegrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(252px,1fr)); gap:var(--sp-4); }
+.pagecard { padding:var(--sp-5); display:flex; flex-direction:column; gap:var(--sp-2); cursor:pointer; }
+.pagecard:hover { border-color:var(--border-strong); }
+.pagecard h4 { margin:0; font-size:var(--fs-h3); font-weight:500; line-height:1.4; }
+.pagecard:hover h4 { color:var(--primary); }
+.pcard-snip { font-size:var(--fs-meta); color:var(--text-2); line-height:1.7; }
+.pcard-foot { display:flex; align-items:center; gap:var(--sp-2); margin-top:auto; padding-top:var(--sp-3); border-top:1px solid var(--border); color:var(--text-3); font-size:var(--fs-caption); }
+
+.sortbar { display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-5); }
+@media (max-width:1151px) {
+  .side { margin-bottom:var(--sp-4); }
+  .zone-nav { flex-direction:row; overflow-x:auto; gap:8px; padding-bottom:4px; }
+  .zone-nav .section-label { display:none; }
+  .zone-item { flex:0 0 auto; border:1px solid var(--border); }
+  .zone-item.on { border-color:var(--primary-border); }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item active">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- 左栏：分区导航 -->
+  <aside class="side">
+    <div class="section-label">分区</div>
+    <div class="zone-nav">
+      <div class="zone-item on"><span class="zone-dot"></span>模型与方法<span class="c">23</span></div>
+      <div class="zone-item"><span class="zone-dot"></span>训练数据<span class="c">31</span></div>
+      <div class="zone-item"><span class="zone-dot"></span>工程实践<span class="c">18</span></div>
+      <div class="zone-item"><span class="zone-dot"></span>来源摘要<span class="c">42</span></div>
+      <div class="zone-item"><span class="zone-dot"></span>工具与命令<span class="c">9</span></div>
+      <div class="zone-item"><span class="zone-dot"></span>未归类的地方<span class="c">5</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="tiny" style="line-height:1.8">
+      分区由 LLM 聚类自动生成，<b>不支持手动增删改名</b>。觉得某页分错了，可以在页面详情里一键改区。
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="crumb" style="display:flex;align-items:center;gap:8px;color:var(--text-3);font-size:var(--fs-meta);margin-bottom:var(--sp-2)">浏览 <span>/</span> 模型与方法</div>
+    <div class="btn-row" style="justify-content:space-between;align-items:flex-end;margin-bottom:var(--sp-5)">
+      <div>
+        <h1 class="page-title" style="margin:0">模型与方法</h1>
+        <p class="page-sub" style="margin:4px 0 0">23 个页面 · 平均互链 4.2 · 最近更新 25 分钟前</p>
+      </div>
+      <div class="sortbar" style="margin:0">
+        <span class="tiny">排序</span>
+        <div class="seg"><div class="on">最近更新</div><div>入链最多</div><div>名称</div></div>
+      </div>
+    </div>
+
+    <div class="pagegrid">
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">概念页</span><span class="badge badge-accent">LLM 生成</span></div>
+        <h4>合成数据质量</h4>
+        <div class="pcard-snip">去重阈值的选择直接决定了语料的多样性上限，phi 系列给出了可复现的实证标准。</div>
+        <div class="pcard-foot"><span>25 分钟前</span><span class="row-meta">入链 12</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">概念页</span></div>
+        <h4>教科书效应</h4>
+        <div class="pcard-snip">高质量、高信息密度的语料能在更小参数量下达到同等推理能力，这是「Textbooks Are All You Need」的核心假设。</div>
+        <div class="pcard-foot"><span>1 小时前</span><span class="row-meta">入链 9</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">实体页</span><span class="badge">已由你编辑</span></div>
+        <h4>phi-1</h4>
+        <div class="pcard-snip">1.3B 参数代码模型，用教科书级合成数据 + 习题集训练，证明了数据质量可以替代参数规模。</div>
+        <div class="pcard-foot"><span>昨天</span><span class="row-meta">入链 7</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">概念页</span></div>
+        <h4>知识蒸馏</h4>
+        <div class="pcard-snip">用大模型输出去训练小模型；与传统预训练的差异在于标签来源的分布形态。</div>
+        <div class="pcard-foot"><span>2 天前</span><span class="row-meta">入链 6</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">工具页</span></div>
+        <h4>linter / 体检规则</h4>
+        <div class="pcard-snip">把「页面矛盾」「孤儿页」「失效链接」写成可检查的规则，让 LLM 可以自审。</div>
+        <div class="pcard-foot"><span>3 天前</span><span class="row-meta">入链 5</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">概念页</span><span class="badge badge-warning">待体检</span></div>
+        <h4>去重策略</h4>
+        <div class="pcard-snip">MinHash 与精确去重的取舍；阈值取值与「合成数据质量」页存在冲突。</div>
+        <div class="pcard-foot"><span>上周</span><span class="row-meta">入链 4</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">来源摘要</span></div>
+        <h4>Textbooks Are All You Need（论文摘要）</h4>
+        <div class="pcard-snip">原文由用户提供，页面内容为自动摘要，完整原文保留在素材中可回溯。</div>
+        <div class="pcard-foot"><span>上周</span><span class="row-meta">入链 3</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">实体页</span></div>
+        <h4>MinHash-LSH</h4>
+        <div class="pcard-snip">近似去重常用组合，用最小哈希签名估计集合相似度，再分桶匹配。</div>
+        <div class="pcard-foot"><span>上周</span><span class="row-meta">入链 2</span></div>
+      </div>
+      <div class="card pagecard">
+        <div class="btn-row" style="gap:6px"><span class="badge badge-primary">概念页</span><span class="badge badge-danger">孤儿页</span></div>
+        <h4>课程式学习</h4>
+        <div class="pcard-snip">按难度由浅入深组织训练顺序；目前没有任何页面链接到此页。</div>
+        <div class="pcard-foot"><span>2 周前</span><span class="row-meta">入链 0</span></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="tiny">显示 9 / 23 · 这里是全部，没有分页</div>
+  </div>
+</div>
+
+</body>
+</html>

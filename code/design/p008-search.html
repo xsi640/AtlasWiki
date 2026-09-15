@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-008 搜索结果页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.qbar { display:flex; gap:var(--sp-3); align-items:center; border:1px solid var(--border-strong); border-radius:var(--r-lg); background:var(--surface); padding:var(--sp-3) var(--sp-4); box-shadow:var(--shadow-card); margin-bottom:var(--sp-5); }
+.qbar input { border:none; background:transparent; font-size:var(--fs-h2); height:34px; color:var(--text); flex:1; }
+.qbar input:focus { outline:none; }
+
+.res-row { padding:var(--sp-4) var(--sp-5); border-bottom:1px solid var(--border); }
+.res-row:last-child { border-bottom:none; }
+.res-row:hover { background:var(--surface-2); }
+.res-title { font-size:var(--fs-h3); font-weight:500; margin-bottom:6px; }
+.res-snip { font-size:var(--fs-sm); color:var(--text-2); line-height:1.75; }
+.res-snip em { font-style:normal; }
+.res-foot { display:flex; align-items:center; gap:var(--sp-2); margin-top:var(--sp-2); color:var(--text-3); font-size:var(--fs-caption); }
+.hit-mark { color:var(--text-3); font-size:var(--fs-caption); margin-left:6px; }
+
+.scope-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border); font-size:var(--fs-meta); color:var(--text-2); }
+.scope-row:last-child { border-bottom:none; }
+@media (max-width:1151px) {
+  .qbar { flex-wrap:wrap; }
+  .qbar input { min-width:200px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <div class="qbar">
+      <span style="font-size:18px;color:var(--text-3)">⌕</span>
+      <input value="去重阈值">
+      <div class="btn btn-sm">清除</div>
+    </div>
+
+    <div class="btn-row" style="justify-content:space-between;margin-bottom:var(--sp-3)">
+      <span class="muted" style="font-size:var(--fs-sm)">18 个结果 · 用时 0.04 秒</span>
+      <div class="btn-row">
+        <span class="tiny">范围</span>
+        <div class="seg"><div class="on">全部</div><div>页面标题</div><div>正文</div><div>素材原文</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="overflow:hidden">
+      <div class="res-row">
+        <div class="res-title"><a class="wikilink" href="#">合成数据质量</a><span class="badge badge-primary" style="margin-left:8px">概念页</span></div>
+        <div class="res-snip">phi 系列论文给出更严格的标准：<mark>去重阈值</mark> 0.9 以上才算重复。早期实验取 0.8，被证明会误删有价值样本。</div>
+        <div class="res-foot"><span class="tag">模型与方法</span><span>25 分钟前更新</span><span class="hit-mark">命中 3 处</span></div>
+      </div>
+      <div class="res-row">
+        <div class="res-title"><a class="wikilink" href="#">去重策略</a><span class="badge badge-warning" style="margin-left:8px">待体检</span></div>
+        <div class="res-snip">MinHash 与精确去重的取舍；<mark>阈值</mark>取值与「合成数据质量」页存在冲突，两处记录不一致。</div>
+        <div class="res-foot"><span class="tag">训练数据</span><span>上周更新</span><span class="hit-mark">命中 2 处</span></div>
+      </div>
+      <div class="res-row">
+        <div class="res-title"><a class="wikilink" href="#">教科书数据</a></div>
+        <div class="res-snip">在 phi 的复现实验里，<mark>去重阈值</mark>从 0.85 提到 0.92 后，模型在 HumanEval 上又涨了 1.7 个点。</div>
+        <div class="res-foot"><span class="tag">训练数据</span><span>3 天前更新</span><span class="hit-mark">命中 1 处</span></div>
+      </div>
+      <div class="res-row">
+        <div class="res-title"><a class="wikilink" href="#">MinHash-LSH</a></div>
+        <div class="res-snip">近似去重常用组合，用最小哈希签名估计集合相似度，再分桶匹配。<mark>阈值</mark>由签名长度与桶大小共同决定。</div>
+        <div class="res-foot"><span class="tag">工具与命令</span><span>上周更新</span><span class="hit-mark">命中 1 处</span></div>
+      </div>
+      <div class="res-row">
+        <div class="res-title"><a class="wikilink" href="#">Textbooks Are All You Need（论文摘要）</a><span class="badge badge-primary" style="margin-left:8px">来源摘要</span></div>
+        <div class="res-snip">作者在附录里给出了完整的去重参数表，包括每一版的代码级<mark>阈值</mark>取值与对应的评测结果。</div>
+        <div class="res-foot"><span class="tag">来源摘要</span><span>上周更新</span><span class="hit-mark">命中 1 处</span></div>
+      </div>
+      <div class="res-row">
+        <div class="res-title"><a class="wikilink" href="#">数据配比</a></div>
+        <div class="res-snip">合成数据与网络语料的混合比例；讨论到「<mark>阈值</mark>调高后合成样本稀缺」的问题。</div>
+        <div class="res-foot"><span class="tag">训练数据</span><span>2 周前更新</span><span class="hit-mark">命中 1 处</span></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="tiny">显示 6 / 18 · 这里是全部，不做分页</div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <div class="card-head"><div class="card-title">搜索覆盖到哪里</div></div>
+      <div class="card-pad">
+        <div class="scope-row"><span>已建立页面</span><span class="count-pill">128</span></div>
+        <div class="scope-row"><span>素材原文</span><span class="count-pill">46</span></div>
+        <div class="scope-row"><span>问答历史</span><span class="count-pill">—</span></div>
+        <div class="field-hint" style="margin-top:var(--sp-3)">不检索原始 PDF 二进制，只检索已提取的文本层。</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-pad">
+        <div class="callout">
+          <b>没找到想要的？</b>搜索只覆盖已经编译好的内容。如果这个词本应存在，多半是还没有喂进去相关素材。
+        </div>
+        <div class="btn-row" style="margin-top:var(--sp-4)">
+          <div class="btn btn-sm">去喂素材</div>
+          <div class="btn btn-sm btn-ghost">换个词试试</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

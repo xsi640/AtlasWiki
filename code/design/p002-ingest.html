@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-002 素材投放页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.group { margin-bottom: var(--sp-6); }
+.group-head { display:flex; align-items:center; gap:var(--sp-2); margin-bottom:var(--sp-3); }
+.group-idx { width:22px;height:22px;border-radius:50%;background:var(--code-bg);color:var(--text-2);display:grid;place-items:center;font-size:11px;flex:none; }
+.group-title { font-size:var(--fs-h3); font-weight:500; }
+.group-sub { color:var(--text-3); font-size:var(--fs-caption); }
+
+.dropzone { border:1.5px dashed var(--border-strong); border-radius:var(--r-lg); background:var(--bg-subtle); padding:var(--sp-5); text-align:center; }
+.dropzone .dz-ico { width:28px;height:28px;margin:0 auto var(--sp-2); border-radius:var(--r-md); border:1px solid var(--border); background:var(--surface); display:grid;place-items:center; color:var(--text-3); font-size:14px; }
+.dropzone b { font-weight:500; }
+.dz-hint { color:var(--text-3); font-size:var(--fs-caption); margin-top:var(--sp-1); }
+
+.queue-row { display:flex; align-items:center; gap:var(--sp-3); padding:11px var(--sp-5); border-bottom:1px solid var(--border); font-size:var(--fs-sm); }
+.queue-row:last-child { border-bottom:none; }
+.queue-row.failed { background:var(--danger-soft); }
+.q-icon { width:26px;height:26px;border-radius:6px;background:var(--code-bg);display:grid;place-items:center;font-size:10px;color:var(--text-2);flex:none; }
+.q-name { font-weight:500; }
+.q-size { color:var(--text-3); font-size:var(--fs-meta); }
+.q-ops { margin-left:auto; display:flex; gap:6px; align-items:center; }
+
+.url-row { display:flex; gap:var(--sp-2); align-items:center; }
+.url-row .input { flex:1 1 auto; min-width:0; width:auto; }
+.url-row .btn { flex:0 0 auto; white-space:nowrap; }
+.identified { display:flex; gap:var(--sp-3); align-items:flex-start; margin-top:var(--sp-3); padding:var(--sp-3); border:1px solid var(--primary-border); background:var(--primary-soft); border-radius:var(--r-md); }
+
+.note-title { width:100%; margin-bottom:var(--sp-3); }
+
+.action-row { display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-6); padding:var(--sp-3) var(--sp-4); border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface); }
+.action-row .count { font-size:var(--fs-sm); color:var(--text-2); }
+.action-row .spacer { margin-left:auto; }
+
+.step-mini { display:flex; gap:var(--sp-3); margin-bottom:var(--sp-4); }
+.step-mini .n { width:18px;height:18px;border-radius:50%;background:var(--code-bg);color:var(--text-2);display:grid;place-items:center;font-size:10px;flex:none;margin-top:2px; }
+.step-mini .tx { font-size:var(--fs-meta); color:var(--text-2); }
+.fmt-grid { display:flex; flex-wrap:wrap; gap:6px; }
+@media (max-width:1151px) {
+  .action-row { flex-wrap:wrap; }
+  .action-row .spacer { display:none; }
+  .queue-row { flex-wrap:wrap; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <h1 class="page-title">喂素材</h1>
+    <p class="page-sub">三种方式任选其一。整理完后一次性开始摄入，全程可以在围观页看着它跑。</p>
+
+    <div class="action-row">
+      <span class="count">共 <b>5</b> 项待摄入 · 预计 4~6 分钟</span>
+      <span class="tiny">期间可以随时离开，编译不会中断</span>
+      <span class="spacer"></span>
+      <div class="btn btn-ghost btn-sm">清空</div>
+      <div class="btn btn-primary">开始摄入</div>
+    </div>
+
+    <!-- 方式一：上传文件 -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-idx">1</span>
+        <span class="group-title">上传文件</span>
+        <span class="group-sub">可多选，也可直接拖到虚线框里</span>
+      </div>
+      <div class="dropzone">
+        <div class="dz-ico">↑</div>
+        <div><b>把文件拖到这里</b>，或 <span class="wikilink">点击选择文件</span></div>
+        <div class="dz-hint">Markdown / PDF / 纯文本 · 单个文件建议不超过 20 MB</div>
+      </div>
+      <div class="card" style="margin-top:var(--sp-4);overflow:hidden">
+        <div class="card-head"><div class="card-title">待摄入队列</div><span class="tiny">4 项 · 1 项失败</span></div>
+        <div class="queue-row">
+          <span class="q-icon">MD</span>
+          <span class="q-name">教科书数据：一份不严谨的笔记.md</span>
+          <span class="q-size">18 KB</span>
+          <span class="q-ops"><span class="badge badge-success"><span class="dot"></span>就绪</span><span class="btn btn-ghost btn-sm">移除</span></span>
+        </div>
+        <div class="queue-row">
+          <span class="q-icon">PDF</span>
+          <span class="q-name">Textbooks Are All You Need.pdf</span>
+          <span class="q-size">2.4 MB · 21 页</span>
+          <span class="q-ops"><span class="badge badge-success"><span class="dot"></span>就绪</span><span class="btn btn-ghost btn-sm">移除</span></span>
+        </div>
+        <div class="queue-row failed">
+          <span class="q-icon">PDF</span>
+          <span class="q-name">phi-1 技术报告（旧文件）.pdf</span>
+          <span class="q-size">已损坏 · 无法提取正文，原件已保留</span>
+          <span class="q-ops"><span class="badge badge-danger">解析失败</span><span class="btn btn-sm">重试</span><span class="btn btn-ghost btn-sm">移除</span></span>
+        </div>
+        <div class="queue-row">
+          <span class="q-icon">MD</span>
+          <span class="q-name">随手笔记：为什么我的 wiki 越用越乱.md</span>
+          <span class="q-size">6 KB</span>
+          <span class="q-ops"><span class="badge badge-success"><span class="dot"></span>就绪</span><span class="btn btn-ghost btn-sm">移除</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 方式二：粘贴 URL -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-idx">2</span>
+        <span class="group-title">粘贴网址</span>
+        <span class="group-sub">网页文章会抓取正文并生成来源摘要页</span>
+      </div>
+      <div class="url-row">
+        <input class="input" value="https://karpathy.bearblog.dev/llm-wiki/">
+        <div class="btn btn-primary">识别</div>
+      </div>
+      <div class="identified">
+        <span class="badge badge-primary">已识别</span>
+        <div style="flex:1">
+          <div style="font-weight:500">LLM Wiki：把知识写给模型看，而不是给人看</div>
+          <div class="tiny mono" style="margin-top:4px">预计 3,400 字 · 归入「模型与方法」区（等编译后确认）</div>
+        </div>
+        <div class="btn btn-sm btn-ghost">改标题</div>
+      </div>
+    </div>
+
+    <!-- 方式三：手写笔记 -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-idx">3</span>
+        <span class="group-title">手写笔记</span>
+        <span class="group-sub">直接写，它会成为一份独立素材，之后可以再编辑</span>
+      </div>
+      <input class="input note-title" value="今天对「不要让 LLM 直接改 raw/」的一点想法">
+      <textarea class="input" rows="5">起因：昨天让模型顺手改了一下自己的笔记，结果下次编译出来的页面跟改动没有关系，还覆盖了我不想要的版本。
+
+结论：raw/ 只允许我本人动手改，模型永远只读。改完之后不会立刻同步，得自己点一次重编译。</textarea>
+      <div class="btn-row" style="margin-top:var(--sp-3)">
+        <div class="btn">加入队列</div>
+        <span class="tiny">会保存为 raw/notes/2026-09-15.md</span>
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <div class="card-head"><div class="card-title">接下来会发生什么</div></div>
+      <div class="card-pad" style="font-size:var(--fs-sm)">
+        <div class="step-mini"><span class="n">1</span><span class="tx">逐份读取原文，切分成可处理的段落</span></div>
+        <div class="step-mini"><span class="n">2</span><span class="tx">LLM 识别实体与概念，写成互相 [[链接]] 的页面</span></div>
+        <div class="step-mini"><span class="n">3</span><span class="tx">按语义归入分区，更新索引</span></div>
+        <div class="step-mini"><span class="n">4</span><span class="tx">产出一份变更清单，你决定接不接受</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-head"><div class="card-title">支持什么</div></div>
+      <div class="card-pad">
+        <div class="fmt-grid">
+          <span class="chip">.md</span><span class="chip">.pdf</span><span class="chip">.txt</span><span class="chip">网页 URL</span><span class="chip">手写</span>
+        </div>
+        <div class="field-hint" style="margin-top:var(--sp-3)">PDF 依赖系统里能提取文本层；扫描件暂不支持。</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-pad">
+        <div class="callout callout-primary">
+          <b>第一次来？</b>建议先喂 3~5 篇同主题的素材，问答才有东西可检索。素材太少时答案会偏薄。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

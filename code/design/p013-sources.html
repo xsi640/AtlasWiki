@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-013 素材库页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.tabs { display:flex; gap:var(--sp-1); border-bottom:1px solid var(--border); margin-bottom:var(--sp-5); }
+.tab { padding:9px 14px; font-size:var(--fs-sm); color:var(--text-2); border-bottom:2px solid transparent; }
+.tab.on { color:var(--primary); border-bottom-color:var(--primary); }
+.tab span { color:var(--text-3); font-size:var(--fs-caption); margin-left:6px; }
+table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+th { text-align:left; font-weight:500; color:var(--text-3); font-size:var(--fs-meta); padding:10px var(--sp-5); border-bottom:1px solid var(--border); background:var(--surface-2); }
+td { padding:12px var(--sp-5); border-bottom:1px solid var(--border); vertical-align:middle; }
+tr.selected td { background:var(--primary-soft); }
+.name-cell { display:flex; align-items:center; gap:10px; }
+.type-ico { width:26px;height:26px;border-radius:6px;background:var(--code-bg);display:grid;place-items:center;font-size:11px;color:var(--text-2); }
+.ops { display:flex; gap:6px; justify-content:flex-end; }
+.card-scroll { overflow:hidden; }
+@media (max-width:1151px) { .card-scroll { overflow-x:auto; } .card-scroll table { min-width:760px; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item active">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <div class="btn-row" style="justify-content:space-between;margin-bottom:var(--sp-5)">
+      <div>
+        <h1 class="page-title" style="margin:0">素材库</h1>
+        <p class="page-sub" style="margin:4px 0 0">46 份素材 · 派生出 128 个页面</p>
+      </div>
+      <div class="btn-row"><div class="btn">喂素材</div><div class="btn btn-ghost">导入 md 文件夹</div></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on">全部 <span>46</span></div>
+      <div class="tab">正常 <span>41</span></div>
+      <div class="tab">待重编译 <span>2</span></div>
+      <div class="tab">失败 <span>2</span></div>
+      <div class="tab">已删除 <span>1</span></div>
+    </div>
+
+    <div class="card card-scroll">
+      <table>
+        <thead>
+          <tr><th style="width:38%">素材</th><th>入库时间</th><th>派生页面</th><th>状态</th><th style="text-align:right">操作</th></tr>
+        </thead>
+        <tbody>
+          <tr class="selected">
+            <td><div class="name-cell"><div class="type-ico">MD</div><div><div style="font-weight:500">随手笔记：为什么我的 wiki 越用越乱</div><div class="tiny mono">raw/notes/2026-09-14.md</div></div></div></td>
+            <td class="muted tiny">2 小时前</td>
+            <td>5</td>
+            <td><span class="badge badge-warning">待重编译</span></td>
+            <td><div class="ops"><div class="btn btn-sm">重编译</div><div class="btn btn-sm">编辑</div><div class="btn btn-ghost btn-sm">删除</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="type-ico">PDF</div><div><div style="font-weight:500">《Textbooks Are All You Need》</div><div class="tiny mono">raw/papers/2406-textbooks.pdf · 28 页</div></div></div></td>
+            <td class="muted tiny">今天 14:01</td>
+            <td>9</td>
+            <td><span class="badge badge-success">正常</span></td>
+            <td><div class="ops"><div class="btn btn-sm">重编译</div><div class="btn btn-sm">编辑</div><div class="btn btn-ghost btn-sm">删除</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="type-ico">PDF</div><div><div style="font-weight:500">《Scaling Laws for Neural Language Models》</div><div class="tiny mono">raw/papers/2001-scaling.pdf · 34 页</div></div></div></td>
+            <td class="muted tiny">昨天</td>
+            <td>11</td>
+            <td><span class="badge badge-success">正常</span></td>
+            <td><div class="ops"><div class="btn btn-sm">重编译</div><div class="btn btn-sm">编辑</div><div class="btn btn-ghost btn-sm">删除</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="type-ico">URL</div><div><div style="font-weight:500">llms.txt 提案：给 LLM 准备的站点索引</div><div class="tiny mono">raw/articles/llms-txt.html</div></div></div></td>
+            <td class="muted tiny">9 月 12 日</td>
+            <td>4</td>
+            <td><span class="badge badge-success">正常</span></td>
+            <td><div class="ops"><div class="btn btn-sm">重编译</div><div class="btn btn-sm">编辑</div><div class="btn btn-ghost btn-sm">删除</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="type-ico">PDF</div><div><div style="font-weight:500">《GitHub Copilot 实测数据》</div><div class="tiny mono">raw/papers/copilot-eval.pdf</div></div></div></td>
+            <td class="muted tiny">9 月 10 日</td>
+            <td>0</td>
+            <td><span class="badge badge-danger">解析失败</span></td>
+            <td><div class="ops"><div class="btn btn-sm">重试解析</div><div class="btn btn-sm">看原文</div><div class="btn btn-ghost btn-sm">移除</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="name-cell"><div class="type-ico">MD</div><div><div style="font-weight:500;color:var(--text-3)">随手笔记：灵感碎片（已删除）</div><div class="tiny mono">raw/notes/2026-09-02.md</div></div></div></td>
+            <td class="muted tiny">9 月 2 日</td>
+            <td class="muted">2（已失效）</td>
+            <td><span class="badge">已删除</span></td>
+            <td><div class="ops"><div class="btn btn-sm">恢复</div><div class="btn btn-ghost btn-sm">彻底删除</div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="section-label">选中：随手笔记</div>
+    <div class="card card-pad">
+      <div class="tiny" style="line-height:1.9">
+        <div>类型：<span class="tag">手写笔记</span></div>
+        <div style="margin-top:6px">派生页面：<strong>5</strong> 个</div>
+        <div style="margin-top:6px">上次编译：9 月 14 日 22:10</div>
+        <div style="margin-top:6px">大小：<span class="mono">3.1 KB</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="btn-row"><div class="btn btn-sm">看原文</div><div class="btn btn-sm">重编译</div></div>
+    </div>
+
+    <div class="section-label">规则提醒</div>
+    <div class="card card-pad tiny" style="line-height:1.8">
+      手写笔记可以改正文；网页和 PDF 只能改标题、标签、备注——正文来自外部，不能被改动。<br><br>
+      删除是软删除，2 个受影响的页面会被标记为失效链接，下次体检时列出。
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

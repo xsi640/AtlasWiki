@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-012 设置页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.card-group { margin-bottom:var(--sp-5); }
+.card-group > .card-head { padding:var(--sp-3) var(--sp-5); }
+.card-body { padding:var(--sp-4) var(--sp-5); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-5); }
+.key-row { display:flex; gap:var(--sp-2); align-items:center; }
+
+.cost-body { display:flex; gap:var(--sp-8); align-items:center; }
+.cost-left { flex:0 0 210px; }
+.cost-v { font-size:34px; font-weight:500; letter-spacing:-1px; line-height:1.1; }
+.cost-k { font-size:var(--fs-meta); color:var(--text-3); }
+.chart { flex:1 1 auto; min-width:0; display:flex; align-items:flex-end; gap:10px; height:76px; }
+.bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.bar { width:100%; max-width:34px; background:var(--primary-soft); border:1px solid var(--primary-border); border-radius:4px 4px 0 0; }
+.bar.hi { background:var(--primary); border-color:var(--primary); }
+.bar-lbl { font-size:var(--fs-caption); color:var(--text-3); }
+@media (max-width:1151px) {
+  .two-col { grid-template-columns:1fr; }
+  .cost-body { flex-direction:column; align-items:stretch; gap:var(--sp-5); }
+  .cost-left { flex:0 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <h1 class="page-title">设置</h1>
+    <p class="page-sub">模型、花费和数据都在你自己手里，随时可以走人。</p>
+
+    <!-- 模型接入 -->
+    <div class="card card-group">
+      <div class="card-head"><div class="card-title">模型接入</div><span class="badge badge-success"><span class="dot"></span>已连通</span></div>
+      <div class="card-body">
+        <div class="two-col">
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Provider</label>
+            <div class="input" style="display:flex;align-items:center;justify-content:space-between">OpenAI 兼容 <span style="color:var(--text-3)">▾</span></div>
+            <div class="field-hint">换成别的厂商只需要改这里，其余流程不变</div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">模型名</label>
+            <input class="input" value="deepseek-chat">
+            <div class="field-hint">编译与问答使用同一个模型</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label">API Key</label>
+          <div class="key-row">
+            <input class="input" type="password" value="sk-28fa9c17e04b42aa91d3" style="max-width:420px">
+            <div class="btn">更换</div>
+            <div class="btn btn-ghost">测试连接</div>
+          </div>
+          <div class="field-hint">保存在本机，不上传。余额不足或 key 失效时，会在编译时明确报错并指向这里。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 成本看板 -->
+    <div class="card card-group">
+      <div class="card-head"><div class="card-title">成本看板</div><span class="tiny">近 7 日</span></div>
+      <div class="card-body cost-body">
+        <div class="cost-left">
+          <div class="cost-v">¥18.42</div>
+          <div class="cost-k">本月累计 · 共 47 次调用</div>
+          <div class="cost-k" style="margin-top:2px">单次平均 ¥0.39</div>
+        </div>
+        <div class="chart">
+          <div class="bar-wrap"><div class="bar" style="height:18px"></div><span class="bar-lbl">周一</span></div>
+          <div class="bar-wrap"><div class="bar" style="height:30px"></div><span class="bar-lbl">周二</span></div>
+          <div class="bar-wrap"><div class="bar" style="height:24px"></div><span class="bar-lbl">周三</span></div>
+          <div class="bar-wrap"><div class="bar" style="height:44px"></div><span class="bar-lbl">周四</span></div>
+          <div class="bar-wrap"><div class="bar hi" style="height:72px"></div><span class="bar-lbl">周五</span></div>
+          <div class="bar-wrap"><div class="bar" style="height:36px"></div><span class="bar-lbl">周六</span></div>
+          <div class="bar-wrap"><div class="bar" style="height:14px"></div><span class="bar-lbl">周日</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据 -->
+    <div class="card card-group">
+      <div class="card-head"><div class="card-title">数据</div><span class="badge badge-success"><span class="dot"></span>已启用 git</span></div>
+      <div class="card-body">
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label">数据文件夹</label>
+          <div class="key-row">
+            <div class="input mono" style="display:flex;align-items:center;max-width:420px;color:var(--text-2)">D:\llm-wiki</div>
+            <div class="btn btn-primary">打开数据文件夹</div>
+            <div class="btn btn-ghost">在 git 里看看改动</div>
+          </div>
+          <div class="field-hint">打开后你会看到 <span class="tag">raw/</span>、<span class="tag">wiki/</span> 和 schema 文件，全部可直接编辑 · 最近提交 12 分钟前</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <div class="btn btn-primary">保存设置</div>
+      <div class="btn btn-ghost">取消</div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <div class="card-head"><div class="card-title">用量明细</div></div>
+      <div class="card-pad" style="padding-top:var(--sp-2);padding-bottom:var(--sp-2)">
+        <div class="list-row" style="padding-left:0;padding-right:0;border-bottom:none">
+          <div style="flex:1"><div class="row-title">编译</div><div class="tiny">21 次 · ¥11.30</div></div>
+        </div>
+        <div class="list-row" style="padding-left:0;padding-right:0;border-bottom:none">
+          <div style="flex:1"><div class="row-title">问答</div><div class="tiny">42 次 · ¥6.10</div></div>
+        </div>
+        <div class="list-row" style="padding-left:0;padding-right:0;border-bottom:none">
+          <div style="flex:1"><div class="row-title">体检</div><div class="tiny">18 次 · ¥1.02</div></div>
+        </div>
+        <div class="divider" style="margin:var(--sp-2) 0"></div>
+        <div class="tiny">只统计实际发生的调用，不含从配置项推算的预估值。</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-pad">
+        <div class="callout callout-primary">
+          <b>你的数据就是一堆纯 Markdown 文件。</b>不依赖本产品也能读、能改、能搬走 —— 这是刻意的设计，不是妥协。
+        </div>
+        <div class="divider"></div>
+        <div class="callout">
+          <b>换模型的代价</b><br>所有已完成的内容都还在 <span class="tag">wiki/</span> 里。换模型只会影响之后写进去的部分，历史页面不会被重写。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

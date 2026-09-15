@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-006 全局图谱页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+/* 画布高度随视口弹性变化：1440×900 笔记本下约 580，外接屏放大时不无限拉伸 */
+.graph-wrap { position:relative; height:clamp(440px, calc(100vh - 320px), 700px); border:1px solid var(--border); border-radius:var(--r-lg); background:
+  radial-gradient(circle at 1px 1px, var(--grid-line) 1px, transparent 0) 0 0/28px 28px, var(--surface-2); overflow:hidden; }
+.legend { display:flex; flex-direction:column; gap:8px; font-size:var(--fs-meta); }
+.legend i { width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:8px; }
+.node-label { font-size:12px; fill:var(--text); }
+.hud { position:absolute; left:16px; bottom:16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:10px 12px; font-size:var(--fs-meta); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item active">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <h1 class="page-title">知识图谱</h1>
+    <p class="page-sub">128 个页面 · 412 条链接 · 6 个分区</p>
+
+    <div class="toolbar" style="margin-bottom:var(--sp-4)">
+      <span class="tiny">分区</span>
+      <div class="btn btn-sm">全部 <span style="color:var(--text-3)">▾</span></div>
+      <div class="btn btn-sm" style="margin-left:8px">模型与方法 ✕</div>
+      <div class="btn btn-sm">训练数据 ✕</div>
+      <div style="margin-left:auto;display:flex;gap:var(--sp-3);align-items:center">
+        <span class="tiny">深度</span>
+        <div class="seg"><div>1 层</div><div class="on">2 层</div><div>全部</div></div>
+        <div class="btn btn-sm">布局：力导向 ▾</div>
+      </div>
+    </div>
+
+    <div class="graph-wrap">
+      <svg width="100%" height="100%" viewBox="0 0 1180 760" style="position:absolute;inset:0">
+        <g stroke="var(--border-strong)" stroke-width="1" opacity=".85">
+          <line x1="590" y1="380" x2="410" y2="250"/><line x1="590" y1="380" x2="790" y2="250"/>
+          <line x1="590" y1="380" x2="360" y2="470"/><line x1="590" y1="380" x2="820" y2="470"/>
+          <line x1="590" y1="380" x2="590" y2="180"/><line x1="590" y1="380" x2="600" y2="600"/>
+          <line x1="410" y1="250" x2="250" y2="160"/><line x1="410" y1="250" x2="300" y2="360"/>
+          <line x1="790" y1="250" x2="950" y2="170"/><line x1="790" y1="250" x2="900" y2="360"/>
+          <line x1="360" y1="470" x2="220" y2="560"/><line x1="820" y1="470" x2="980" y2="560"/>
+          <line x1="600" y1="600" x2="420" y2="660"/><line x1="600" y1="600" x2="790" y2="670"/>
+          <line x1="590" y1="180" x2="430" y2="110"/><line x1="590" y1="180" x2="760" y2="120"/>
+        </g>
+        <g stroke="var(--primary)" stroke-width="1.6" opacity=".9">
+          <line x1="590" y1="380" x2="410" y2="250"/><line x1="590" y1="380" x2="360" y2="470"/>
+          <line x1="590" y1="380" x2="790" y2="250"/>
+        </g>
+
+        <g>
+          <circle cx="590" cy="380" r="30" fill="var(--primary)"/>
+          <text class="node-label" x="590" y="428" text-anchor="middle" fill="var(--text)" font-weight="500">合成数据质量</text>
+        </g>
+        <g><circle cx="410" cy="250" r="17" fill="var(--accent)"/><text class="node-label" x="410" y="285" text-anchor="middle">教科书式合成数据</text></g>
+        <g><circle cx="790" cy="250" r="14" fill="var(--accent)"/><text class="node-label" x="790" y="285" text-anchor="middle">去重阈值</text></g>
+        <g><circle cx="360" cy="470" r="15" fill="var(--accent)"/><text class="node-label" x="360" y="505" text-anchor="middle">数据工程</text></g>
+        <g><circle cx="820" cy="470" r="13" fill="var(--accent)"/><text class="node-label" x="820" y="505" text-anchor="middle">提示工程</text></g>
+        <g><circle cx="590" cy="180" r="18" fill="var(--primary-border)"/><text class="node-label" x="590" y="155" text-anchor="middle">上下文工程</text></g>
+        <g><circle cx="600" cy="600" r="16" fill="var(--primary-border)"/><text class="node-label" x="600" y="636" text-anchor="middle">Microsoft Phi</text></g>
+        <g><circle cx="250" cy="160" r="9" fill="var(--border-strong)"/><text class="node-label" x="250" y="188" text-anchor="middle">蒸馏</text></g>
+        <g><circle cx="300" cy="360" r="9" fill="var(--border-strong)"/><text class="node-label" x="300" y="388" text-anchor="middle">语料清洗</text></g>
+        <g><circle cx="950" cy="170" r="8" fill="var(--border-strong)"/><text class="node-label" x="950" y="198" text-anchor="middle">MinHash</text></g>
+        <g><circle cx="900" cy="360" r="9" fill="var(--border-strong)"/><text class="node-label" x="900" y="388" text-anchor="middle">少样本提示</text></g>
+        <g><circle cx="220" cy="560" r="8" fill="var(--border-strong)"/><text class="node-label" x="220" y="588" text-anchor="middle">混合训练</text></g>
+        <g><circle cx="980" cy="560" r="8" fill="var(--border-strong)"/><text class="node-label" x="980" y="588" text-anchor="middle">推理即 caching</text></g>
+        <g><circle cx="420" cy="660" r="8" fill="var(--border-strong)"/><text class="node-label" x="420" y="688" text-anchor="middle">小模型路线</text></g>
+        <g><circle cx="790" cy="670" r="8" fill="var(--border-strong)"/><text class="node-label" x="790" y="698" text-anchor="middle">评测基准</text></g>
+        <g><circle cx="430" cy="110" r="7" fill="var(--border-strong)"/><text class="node-label" x="430" y="132" text-anchor="middle">RAG</text></g>
+        <g><circle cx="760" cy="120" r="7" fill="var(--border-strong)"/><text class="node-label" x="760" y="142" text-anchor="middle">LLM wiki</text></g>
+      </svg>
+
+      <div class="hud">
+        <div style="font-weight:500;margin-bottom:4px">合成数据质量</div>
+        <div class="tiny">4 条入链 · 4 条出链 · 模型与方法</div>
+        <div class="btn-row" style="margin-top:8px"><div class="btn btn-sm">打开页面</div><div class="btn btn-ghost btn-sm">以此为焦点</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="section-label">图例</div>
+    <div class="card card-pad">
+      <div class="legend">
+        <div><i style="background:var(--primary)"></i>当前焦点</div>
+        <div><i style="background:var(--accent)"></i>概念页</div>
+        <div><i style="background:var(--primary-border)"></i>实体页 / 工具页</div>
+        <div><i style="background:var(--border-strong)"></i>1 层之外的节点</div>
+      </div>
+    </div>
+
+    <div class="section-label">网络体检</div>
+    <div class="card card-pad">
+      <div class="tiny" style="line-height:1.9">
+        <div>平均对外链接：<strong>3.2</strong> ✓ 达到门槛</div>
+        <div>孤儿页：<strong style="color:var(--warning)">3</strong> 个（占 2.3%）</div>
+        <div>最大枢纽：<span class="wikilink">上下文工程</span> · 19 条入链</div>
+      </div>
+      <div class="divider"></div>
+      <div class="btn btn-sm">看孤儿页名单</div>
+    </div>
+
+    <div class="section-label">提示</div>
+    <div class="card card-pad tiny">节点超过 300 时会自动按当前筛选分区收敛，避免出现一整屏毛线球。</div>
+  </div>
+</div>
+
+</body>
+</html>

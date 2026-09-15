@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-003 编译围观页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.screen-title { display:flex; align-items:baseline; gap:12px; margin-bottom:4px; }
+.live-badge { display:inline-flex; align-items:center; gap:6px; height:24px; padding:0 10px; border-radius:var(--r-full); background:var(--accent-soft); border:1px solid var(--accent-border); color:var(--accent); font-size:var(--fs-caption); }
+.pulse { width:7px;height:7px;border-radius:50%;background:currentColor; }
+.progress { height:6px; background:var(--code-bg); border-radius:var(--r-full); overflow:hidden; }
+.progress > i { display:block; height:100%; width:62%; background:var(--primary); border-radius:var(--r-full); }
+.steps { margin-top:var(--sp-6); }
+.step { display:flex; gap:var(--sp-4); padding:var(--sp-3) 0; }
+.step-mark { width:22px;height:22px;border-radius:50%; flex:none; display:grid;place-items:center; font-size:11px; border:1px solid var(--border-strong); color:var(--text-3); margin-top:2px; }
+.step.done .step-mark { background:var(--success-soft); border-color:transparent; color:var(--success); }
+.step.active .step-mark { background:var(--primary); border-color:var(--primary); color:var(--primary-text); }
+.step-body { flex:1; }
+.step-title { font-size:var(--fs-sm); font-weight:500; }
+.step-meta { font-size:var(--fs-meta); color:var(--text-3); }
+.stat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:var(--sp-3); }
+.stat { padding:var(--sp-4); border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface-2); }
+.stat-v { font-size:var(--fs-h1); font-weight:500; }
+.stat-k { font-size:var(--fs-meta); color:var(--text-3); }
+.queue-item { display:flex; align-items:center; gap:var(--sp-3); padding:10px 0; border-bottom:1px solid var(--border); font-size:var(--fs-sm); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <div class="screen-title">
+      <h1 class="page-title" style="margin:0">正在编译</h1>
+      <span class="live-badge"><span class="pulse"></span>进行中 · 可离开</span>
+    </div>
+    <p class="page-sub">这份素材正在被写进 wiki。你可以留在这儿看，也可以去做别的，完成后会通知你。</p>
+
+    <div class="card card-pad">
+      <div class="btn-row" style="justify-content:space-between;margin-bottom:var(--sp-3)">
+        <div>
+          <div style="font-weight:500">《Textbooks Are All You Need》</div>
+          <div class="tiny mono">raw/papers/2406-textbooks.pdf · 28 页</div>
+        </div>
+        <div class="badge badge-primary">62% · 预计还剩 3 分 20 秒</div>
+      </div>
+      <div class="progress"><i></i></div>
+
+      <div class="steps">
+        <div class="step done">
+          <div class="step-mark">✓</div>
+          <div class="step-body">
+            <div class="step-title">读取素材，提取关键结论</div>
+            <div class="step-meta">识别出 6 个概念 · 2 个实体 · 1 处与外部结论冲突</div>
+          </div>
+        </div>
+        <div class="step active">
+          <div class="step-mark">3</div>
+          <div class="step-body">
+            <div class="step-title">正在写：合成数据质量 → 更新「数据工程」分区</div>
+            <div class="step-meta">已更新 4 个页面 · 正在处理第 5 个 · <span class="mono tiny">synthetic-data.md</span></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-mark">4</div>
+          <div class="step-body">
+            <div class="step-title">建立双向链接与反向引用</div>
+            <div class="step-meta">待处理</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-mark">5</div>
+          <div class="step-body">
+            <div class="step-title">更新索引 index.md 与本次变更记录</div>
+            <div class="step-meta">待处理</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="btn-row">
+        <div class="btn btn-ghost btn-sm">留在这里看</div>
+        <div class="btn btn-sm">去做别的（后台继续）</div>
+        <div style="margin-left:auto" class="btn btn-ghost btn-sm">中止本次编译</div>
+      </div>
+    </div>
+
+    <div class="section-label">队列里还有 2 份</div>
+    <div class="card card-pad">
+      <div class="queue-item"><div class="badge">排队</div><div>《Scaling Laws for Neural Language Models》<div class="tiny mono">papers/2001-scaling.pdf</div></div><div style="margin-left:auto" class="row-meta">约 6 分钟</div></div>
+      <div class="queue-item" style="border-bottom:none"><div class="badge">排队</div><div>随手笔记：为什么我的 wiki 越用越乱<div class="tiny mono">notes/2026-09-14.md</div></div><div style="margin-left:auto" class="row-meta">约 1 分钟</div></div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="section-label">本次消耗</div>
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-v">¥0.38</div><div class="stat-k">本份素材累计</div></div>
+      <div class="stat"><div class="stat-v">7</div><div class="stat-k">已改动页面</div></div>
+      <div class="stat"><div class="stat-v">3</div><div class="stat-k">新建页面</div></div>
+      <div class="stat"><div class="stat-v">1</div><div class="stat-k">标记的矛盾</div></div>
+    </div>
+
+    <div class="section-label">实时输出</div>
+    <div class="card card-pad">
+      <div class="tiny mono" style="line-height:1.9">
+        <div style="color:var(--text-3)">[14:02:11] 读取 sections 12-18…</div>
+        <div style="color:var(--text-3)">[14:02:26] 发现与「合成数据」页矛盾：</div>
+        <div style="color:var(--danger)">两者对「去重阈值」的描述不一致 → 已标记</div>
+        <div style="color:var(--text-3)">[14:02:40] 更新 data-curation.md</div>
+        <div style="color:var(--accent)">[14:02:52] 正在写 synthetic-data.md</div>
+      </div>
+    </div>
+
+    <div class="section-label">提示</div>
+    <div class="card card-pad tiny">Wiki 所在文件夹：<span class="mono">D:/llm-wiki/wiki</span>，所有改动都会被 git 记录，随时可以回退。</div>
+  </div>
+</div>
+
+</body>
+</html>

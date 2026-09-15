@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-005 页面详情页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.crumb { display:flex; align-items:center; gap:8px; color:var(--text-3); font-size:var(--fs-meta); margin-bottom:var(--sp-3); }
+.title-row { display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-2); }
+.doc { max-width: 820px; }
+.meta-line { color:var(--text-3); font-size:var(--fs-meta); margin-bottom:var(--sp-6); }
+.callout { border-left:3px solid var(--primary); background:var(--primary-soft); padding:var(--sp-3) var(--sp-4); border-radius:0 var(--r-sm) var(--r-sm) 0; margin:var(--sp-4) 0; font-size:var(--fs-sm); }
+.source-block { border-top:1px solid var(--border); margin-top:var(--sp-8); padding-top:var(--sp-5); }
+.backlink-row { padding:9px 0; border-bottom:1px solid var(--border); font-size:var(--fs-sm); display:flex; gap:8px; align-items:flex-start; }
+.backlink-row:last-child { border-bottom:none; }
+.snippet { font-size:var(--fs-meta); color:var(--text-3); }
+.panel-title { display:flex; align-items:center; justify-content:space-between; }
+.count-pill { background:var(--code-bg); color:var(--text-2); border-radius:var(--r-full); padding:1px 8px; font-size:var(--fs-caption); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item active">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <div class="crumb">模型与方法 <span>/</span> 概念页 <span>/</span> 最后更新 25 分钟前</div>
+    <div class="title-row">
+      <h1 class="page-title" style="margin:0">合成数据质量</h1>
+      <span class="badge badge-accent">LLM 生成</span>
+      <span class="badge">已由你编辑</span>
+      <div style="margin-left:auto" class="btn-row">
+        <div class="btn btn-sm">编辑</div>
+        <div class="btn btn-ghost btn-sm">改区</div>
+        <div class="btn btn-ghost btn-sm">变更记录</div>
+      </div>
+    </div>
+    <div class="meta-line mono">synthetic-data.md · 1.8k 字 · 由 3 份素材编译而成</div>
+
+    <div class="doc prose">
+      <p><strong>合成数据</strong>指由模型而非人工撰写、用于训练下游模型的语料。它的价值不在数量，而在<strong>信噪比</strong>——一份好的合成语料应该像教科书：概念密集、无废话、每句话都在推进理解。</p>
+
+      <h3>决定质量的三件事</h3>
+      <p>第一是<a class="wikilink" href="#">去重阈值</a>的选取，它直接决定语料里还剩下多少重复表达；第二是生成时给出的<a class="wikilink" href="#">提示工程</a>约束；第三是是否有过滤模型对结果做二次筛。</p>
+
+      <div class="callout">
+        <strong>存在冲突：</strong>本页采用 0.9 的去重阈值（来自 phi 系列论文），而<a class="wikilink" href="#">教科书式合成数据</a>页记录的是 0.8。体检已标记，等待确认以哪一版为准。
+      </div>
+
+      <h3>和真实语料的关系</h3>
+      <p>实践中通常两者混合：<a class="wikilink" href="#">教科书式合成数据</a>负责提供密度，真实<u>网页语料</u>保留语言多样性。单独使用合成数据训练，模型会在开放式生成上显得"刻意"。这与<a class="wikilink" href="#">上下文工程</a>里提到的"语料形状决定输出形状"是同一个道理。</p>
+
+      <h3>还没想清楚的部分</h3>
+      <p>目前没有证据说明最优的合成/真实配比。这个问题暂未解决，等新的论文进来再补。</p>
+
+      <div class="source-block">
+        <div class="section-label" style="margin-top:0">来源</div>
+        <div class="list-row" style="padding-left:0">
+          <div>
+            <div class="row-title">《Textbooks Are All You Need》</div>
+            <div class="tiny mono">raw/papers/2406-textbooks.pdf · 28 页</div>
+          </div>
+          <div class="row-meta">看原文 →</div>
+        </div>
+        <div class="list-row" style="padding-left:0">
+          <div>
+            <div class="row-title">phi-1 技术报告要点</div>
+            <div class="tiny mono">raw/articles/phi1-notes.md</div>
+          </div>
+          <div class="row-meta">看原文 →</div>
+        </div>
+        <div class="list-row" style="padding-left:0;border-bottom:none">
+          <div>
+            <div class="row-title">随手笔记：去重阈值到底取值多少</div>
+            <div class="tiny mono">raw/notes/2026-09-14.md</div>
+          </div>
+          <div class="row-meta">看原文 →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <div class="card-head"><div class="card-title">谁引用了我</div><span class="count-pill">4</span></div>
+      <div style="padding:var(--sp-3) var(--sp-5)">
+        <div class="backlink-row"><div><div style="font-weight:500">教科书式合成数据</div><div class="snippet">…阈值影响最终密度…</div></div></div>
+        <div class="backlink-row"><div><div style="font-weight:500">数据工程</div><div class="snippet">…主流做法是混合训练…</div></div></div>
+        <div class="backlink-row"><div><div style="font-weight:500">上下文工程</div><div class="snippet">…语料形状决定输出形状…</div></div></div>
+        <div class="backlink-row"><div><div style="font-weight:500">Microsoft Phi</div><div class="snippet">…依赖高质量合成语料…</div></div></div>
+      </div>
+    </div>
+
+    <div class="section-label">我引用了</div>
+    <div class="card card-pad">
+      <div class="hint-row" style="margin-top:0">
+        <div class="chip">去重阈值</div><div class="chip">提示工程</div><div class="chip">教科书式合成数据</div>
+        <div class="chip">上下文工程</div>
+      </div>
+    </div>
+
+    <div class="section-label">这一页的状态</div>
+    <div class="card card-pad tiny" style="line-height:1.9">
+      <div>所属分区：<span class="badge">模型与方法</span></div>
+      <div style="margin-top:6px">人工编辑于 14 分钟前，体检不会再自动覆盖这一段。</div>
+      <div style="margin-top:6px">最近一次编译改动：<span class="mono">+18 / −3</span></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

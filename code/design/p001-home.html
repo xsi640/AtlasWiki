@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-001 首页 · 问答台</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.hero { max-width: 960px; margin: 0 auto; padding: clamp(28px, 5vh, 56px) 0 0; }
+.qbox { border: 1px solid var(--border-strong); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-card); }
+.qbox-top { display: flex; gap: var(--sp-3); padding: var(--sp-4); align-items: flex-start; }
+.qbox input { border: none; background: transparent; font-size: var(--fs-h2); height: 34px; }
+.qbox-foot { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--border); background: var(--surface-2); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.answer { margin-top: var(--sp-8); }
+.answer-body { padding: var(--sp-6); }
+.answer-body p { margin: 0 0 var(--sp-4); }
+.cite-note { display: flex; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--border); background: var(--surface-2); border-radius: 0 0 var(--r-lg) var(--r-lg); align-items: center; }
+.hint-row { margin-top: var(--sp-4); }
+.recent { display: flex; gap: var(--sp-3); align-items: center; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav">
+    <div class="nav-item active">问答</div>
+    <div class="nav-item">浏览</div>
+    <div class="nav-item">图谱</div>
+    <div class="nav-item">素材库</div>
+  </div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…  ⌘K</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="btn btn-primary btn-sm">喂素材</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="hero main">
+    <div class="qbox">
+      <div class="qbox-top">
+        <div style="font-size:18px;color:var(--text-3);padding-top:6px">Q</div>
+        <input class="input" value="为什么 Karpathy 的 LLM wiki 不用向量数据库，也能在个人规模下取代 RAG？" style="flex:1">
+        <div class="btn btn-primary">提问</div>
+      </div>
+      <div class="qbox-foot">
+        <span class="tiny">当前 wiki：128 个页面 · 6 个分区 · 上次体检 2 小时前</span>
+      </div>
+    </div>
+
+    <div class="answer card">
+      <div class="card-head">
+        <div class="card-title">回答</div>
+        <div class="btn-row">
+          <div class="badge badge-accent">综合了 7 个页面</div>
+          <div class="btn btn-ghost btn-sm">重新提问</div>
+          <div class="btn btn-sm">存为页面</div>
+        </div>
+      </div>
+      <div class="answer-body prose">
+        <p>核心差别不在检索精度，而在<strong>知识是否沉淀</strong>。传统 <span class="tag">RAG</span> 在查询时才把文档切块、算相似度、临时拼进上下文，答案用完即弃，下一次提问从零开始；而 LLM wiki 把这一步提前到「编译期」——每份素材进来时，模型已经把它的结论写进 <a class="wikilink" href="#">实体页</a> 与 <a class="wikilink" href="#">概念页</a>，并补上了指向相关页面的 <span class="tag">[[反向链接]]</span>。</p>
+        <p>因此它不需要向量库，靠的是两样东西：<strong>一是页面之间的显式结构</strong>，模型的导航依据是由LLM 自动维护的 <span class="tag">index.md</span> 和每页顶部的摘要，而不是语义近邻；<strong>二是百页量级的上下文足够装下</strong>——个人知识库通常只在几十到几百页，全文放进上下文的成本远低于维护一套 embedding 流水线。</p>
+        <p>由此还可以推出一个原料里没有的结论：<strong>它的瓶颈是「写」而不是「读」</strong>。wiki 的质量取决于 <a class="wikilink" href="#">摄入级联更新</a> 的彻底程度，一旦某页没被新素材回溯更新，错误会沿着链接扩散。这解释了为什么原方案必须配 <a class="wikilink" href="#">体检 lint</a> 那条动作。</p>
+      </div>
+      <div class="cite-note">
+        <span class="tiny mono">引用了 7 个页面 · 未使用任何向量检索 · 本次花费 ¥0.42</span>
+        <div style="margin-left:auto" class="btn-row">
+          <div class="btn btn-ghost btn-sm">换个问法</div>
+          <div class="btn btn-ghost btn-sm">查看历史回答</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint-row">
+      <div class="chip">哪些页面还没被引用？</div>
+      <div class="chip">把“ Transformer ”概念页和我的笔记连起来</div>
+      <div class="chip">最近摄入的素材改变了什么结论？</div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="section-label">最近长出</div>
+    <div class="card">
+      <div class="list-row"><div><div class="row-title">上下文工程</div><div class="tiny">概念页 · 新增</div></div><div class="row-meta">12 分钟前</div></div>
+      <div class="list-row"><div><div class="row-title">Qmd 检索引擎</div><div class="tiny">工具页 · 更新</div></div><div class="row-meta">1 小时前</div></div>
+      <div class="list-row"><div><div class="row-title">摄入级联更新</div><div class="tiny">概念页 · 更新</div></div><div class="row-meta">3 小时前</div></div>
+      <div class="list-row"><div><div class="row-title">注意力机制</div><div class="tiny">概念页 · 新增 3 条入链</div></div><div class="row-meta">昨天</div></div>
+    </div>
+    <div class="section-label">这次体检发现</div>
+    <div class="card card-pad">
+      <div class="recent" style="margin-bottom:8px"><span class="badge badge-danger">矛盾 2</span><span class="tiny">两份论文对涌现能力的判定不一致</span></div>
+      <div class="recent" style="margin-bottom:8px"><span class="badge badge-warning">孤儿页 3</span><span class="tiny">没有任何页面引用它们</span></div>
+      <div class="recent"><span class="badge">失效链接 2</span><span class="tiny">指向已删除的素材</span></div>
+      <div class="divider"></div>
+      <div class="btn btn-sm">去体检报告</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

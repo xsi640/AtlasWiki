@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-009 问答历史页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.hist-card { margin-bottom:var(--sp-4); }
+.hist-q { display:flex; align-items:flex-start; gap:var(--sp-3); padding:var(--sp-4) var(--sp-5); cursor:pointer; }
+.hist-q:hover { background:var(--surface-2); }
+.hist-card.open .hist-q { border-bottom:1px solid var(--border); }
+.q-prefix { color:var(--text-3); font-size:var(--fs-h2); line-height:1.4; width:18px; flex:none; }
+.hist-q .qt { font-size:var(--fs-h3); font-weight:500; line-height:1.5; flex:1; }
+.hist-meta { color:var(--text-3); font-size:var(--fs-meta); margin-top:4px; }
+.hist-right { text-align:right; flex:none; }
+.chev { color:var(--text-3); font-size:var(--fs-caption); }
+.answer-body { padding:var(--sp-5) var(--sp-5) var(--sp-4); }
+.answer-body p { margin:0 0 var(--sp-4); font-size:var(--fs-body); line-height:1.75; }
+.answer-body p:last-child { margin-bottom:0; }
+.cite-note { display:flex; gap:var(--sp-3); padding:var(--sp-3) var(--sp-5); border-top:1px solid var(--border); background:var(--surface-2); align-items:center; }
+@media (max-width:1151px) {
+  .hist-q { flex-wrap:wrap; }
+  .hist-right { width:100%; text-align:left; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item active">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <h1 class="page-title">问答历史</h1>
+    <p class="page-sub">最近 30 天 42 条 · 累计花费 ¥18.40</p>
+
+    <!-- 展开中的一条 -->
+    <div class="card hist-card open">
+      <div class="hist-q">
+        <span class="q-prefix">Q</span>
+        <div style="flex:1">
+          <div class="qt">为什么 Karpathy 的 LLM wiki 不用向量数据库，也能在个人规模下取代 RAG？</div>
+          <div class="hist-meta">今天 14:32 · 综合了 7 个页面 · ¥0.42</div>
+        </div>
+        <div class="hist-right"><span class="chev">收起 ▲</span></div>
+      </div>
+      <div class="answer-body prose">
+        <p>核心差别不在检索精度，而在<strong>知识是否沉淀</strong>。传统 <span class="tag">RAG</span> 在查询时才把文档切块、算相似度、临时拼进上下文，答案用完即弃，下一次提问从零开始；而 LLM wiki 把这一步提前到「编译期」——模型已经把结论写进 <a class="wikilink" href="#">实体页</a> 与 <a class="wikilink" href="#">概念页</a>，并补上了 <span class="tag">[[反向链接]]</span>。</p>
+        <p>由此还能得到一个原料里没有的结论：<strong>它的瓶颈是「写」而不是「读」</strong>。wiki 的质量取决于 <a class="wikilink" href="#">摄入级联更新</a> 的彻底程度，一旦某页没被新素材回溯更新，错误会沿着链接扩散。这解释了为什么原方案必须配 <a class="wikilink" href="#">体检 lint</a>。</p>
+      </div>
+      <div class="cite-note">
+        <span class="tiny mono">引用了 7 个页面 · 未使用任何向量检索</span>
+        <div class="btn-row" style="margin-left:auto">
+          <div class="badge badge-success"><span class="dot"></span>已存为页面</div>
+          <div class="btn btn-ghost btn-sm">重新提问</div>
+          <div class="btn btn-ghost btn-sm" style="color:var(--danger)">删除这条</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 折叠的一条 -->
+    <div class="card hist-card">
+      <div class="hist-q">
+        <span class="q-prefix">Q</span>
+        <div style="flex:1">
+          <div class="qt">去重阈值取 0.8 和取 0.9，最后的模型表现差多少？</div>
+          <div class="hist-meta">昨天 21:04 · 综合了 4 个页面 · ¥0.28</div>
+        </div>
+        <div class="hist-right"><span class="badge badge-warning">涉及矛盾</span><div class="chev" style="margin-top:6px">展开 ▼</div></div>
+      </div>
+    </div>
+
+    <div class="card hist-card">
+      <div class="hist-q">
+        <span class="q-prefix">Q</span>
+        <div style="flex:1">
+          <div class="qt">我的 wiki 里有哪些页面还没被任何页面引用？</div>
+          <div class="hist-meta">昨天 09:47 · 综合了 11 个页面 · ¥0.35</div>
+        </div>
+        <div class="hist-right"><div class="chev">展开 ▼</div></div>
+      </div>
+    </div>
+
+    <div class="card hist-card">
+      <div class="hist-q">
+        <span class="q-prefix">Q</span>
+        <div style="flex:1">
+          <div class="qt">教科书效应在小数据场景下还成立吗？</div>
+          <div class="hist-meta">9 月 12 日 19:20 · 综合了 6 个页面 · ¥0.31</div>
+        </div>
+        <div class="hist-right"><div class="chev">展开 ▼</div></div>
+      </div>
+    </div>
+
+    <div class="card hist-card">
+      <div class="hist-q">
+        <span class="q-prefix">Q</span>
+        <div style="flex:1">
+          <div class="qt">怎么判断一份合成数据到底好不好？</div>
+          <div class="hist-meta">9 月 11 日 15:06 · 综合了 9 个页面 · ¥0.44</div>
+        </div>
+        <div class="hist-right"><div class="chev">展开 ▼</div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="tiny">只保留最近 30 天。删除是单条的，不做批量清理。</div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <div class="card-head"><div class="card-title">这一年你问得最多</div></div>
+      <div class="card-pad">
+        <div class="hint-row">
+          <span class="chip">蒸馏</span><span class="chip">去重</span><span class="chip">上下文工程</span><span class="chip">涌现</span>
+        </div>
+        <div class="field-hint" style="margin-top:var(--sp-3)">问得多的方向，通常值得单独喂一批素材进去。</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-head"><div class="card-title">沉淀情况</div></div>
+      <div class="card-pad">
+        <div class="list-row" style="padding-left:0;padding-right:0"><div><div class="row-title">已存为页面</div><div class="tiny">答案变成了 wiki 的一部分</div></div><div class="row-meta">6 条</div></div>
+        <div class="list-row" style="padding-left:0;padding-right:0"><div><div class="row-title">尚未沉淀</div><div class="tiny">有价值的答案还在流失</div></div><div class="row-meta">36 条</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

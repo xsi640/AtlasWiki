@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>PAGE-010 素材原文页</title>
+<link rel="stylesheet" href="tokens.css">
+<script>const t=new URLSearchParams(location.search).get('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';</script>
+<style>
+.crumb { display:flex; align-items:center; gap:8px; color:var(--text-3); font-size:var(--fs-meta); margin-bottom:var(--sp-3); }
+.title-row { display:flex; align-items:center; gap:var(--sp-3); margin-bottom:var(--sp-2); flex-wrap:wrap; }
+.doc { max-width: 820px; }
+.meta-line { color:var(--text-3); font-size:var(--fs-meta); margin-bottom:var(--sp-6); }
+.source-block { border-top:1px solid var(--border); margin-top:var(--sp-8); padding-top:var(--sp-5); }
+.meta-row { display:flex; gap:var(--sp-3); padding:9px 0; border-bottom:1px solid var(--border); font-size:var(--fs-meta); }
+.meta-row:last-child { border-bottom:none; }
+.meta-row .k { color:var(--text-3); width:76px; flex:none; }
+.meta-row .v { flex:1; min-width:0; word-break:break-all; }
+.derived-row { padding:10px 0; border-bottom:1px solid var(--border); font-size:var(--fs-sm); }
+.derived-row:last-child { border-bottom:none; }
+.locked-note { display:flex; gap:6px; align-items:center; color:var(--text-3); font-size:var(--fs-caption); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">W</span> wiki</div>
+  <div class="nav"><div class="nav-item">问答</div><div class="nav-item">浏览</div><div class="nav-item">图谱</div><div class="nav-item active">素材库</div></div>
+  <div class="topbar-right">
+    <div class="searchbox">搜索页面、概念、素材…</div>
+    <div class="badge badge-warning"><span class="dot"></span>待处理 7</div>
+    <div class="badge">浅色</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="main">
+    <div class="crumb">素材库 <span>/</span> 来源摘要 <span>/</span> 原文</div>
+    <div class="title-row">
+      <h1 class="page-title" style="margin:0">LLM Wiki：把知识写给模型看</h1>
+      <span class="badge badge-primary">网页</span>
+      <span class="badge badge-warning">待重编译</span>
+    </div>
+    <div class="doc meta-line">来自 karpathy.bearblog.dev · 入库 3 天前 · 5,412 字 · 由它派生出 4 个页面</div>
+
+    <!-- STATE-013 / CONTENT-007 -->
+    <div class="callout callout-warning" style="max-width:820px;margin-bottom:var(--sp-5)">
+      <b>内容已更新，重编译后生效。</b>你刚刚改过这份素材的标题，wiki 里的页面还是旧的。
+      <div class="btn-row" style="margin-top:var(--sp-3)">
+        <div class="btn btn-sm btn-primary">立即重编译</div>
+        <span class="tiny">不会自动编译，等你显式触发</span>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:var(--sp-6)">
+      <div class="btn">编辑元数据</div>
+      <div class="btn">重编译</div>
+      <div class="btn btn-ghost" style="color:var(--danger)">删除</div>
+      <span class="locked-note" style="margin-left:var(--sp-2)">🔒 外来素材的正文不可编辑，只能改标题、标签、备注</span>
+    </div>
+
+    <div class="doc prose">
+      <p>一个有意思的观察：我们现在写文档的方式，是为「人」优化的。大量的铺垫、修辞、跳跃性上下文，这些信息对人类很友好，但如果目标是让语言模型去读它，几乎是浪费。</p>
+
+      <h3>反过来的写法</h3>
+      <p>如果目标读者是模型，文档应该写成一份结构化的、可交叉引用的事实集合。每一页只讲一件事，每件事都有明确的名字，名字之间用链接串起来。这样模型在导航时靠的是显式结构，而不是语义相似度。</p>
+      <p>换句话说，与其在查询时把一堆碎片塞进上下文，不如在「编译期」就把知识整理成一张网。<span class="tag">raw</span> 目录是源，不可变；LLM 是编译器；<span class="tag">wiki</span> 目录是编译产物。</p>
+
+      <h3>三个动作就够了</h3>
+      <p>摄入（ingest）：把新素材编译进 wiki；查询（query）：基于整张网回答问题；体检（lint）：检查矛盾、孤儿页与失效链接。不需要向量数据库，也不需要 reranker。</p>
+
+      <div class="callout" style="margin:var(--sp-5) 0">
+        <b>这是提取出的正文文本。</b>PDF 与网页类素材优先显示文本层，原件以「打开本地快照」提供，不在这里做二进制渲染。
+      </div>
+
+      <p>最后一件事：这份 wiki 必须能被版本控制。每页都是纯 Markdown，所有改动都可以 diff，任何一次误操作都能回退。这也是我坚持不让模型直接改写源文件的原因。</p>
+    </div>
+
+    <div class="source-block" style="max-width:820px">
+      <div class="section-label" style="margin-top:0">查看方式</div>
+      <div class="btn-row">
+        <div class="btn btn-sm">打开网页原件</div>
+        <div class="btn btn-sm">打开本地快照</div>
+        <span class="tiny mono">raw/web/karpathy-llm-wiki.html</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail">
+    <div class="card">
+      <div class="card-head"><div class="card-title">素材信息</div></div>
+      <div class="card-pad" style="padding-top:var(--sp-3);padding-bottom:var(--sp-3)">
+        <div class="meta-row"><span class="k">类型</span><span class="v">网页文章</span></div>
+        <div class="meta-row"><span class="k">来源</span><span class="v mono">https://karpathy.bearblog.dev/llm-wiki/</span></div>
+        <div class="meta-row"><span class="k">入库</span><span class="v">3 天前 · 网页抓取</span></div>
+        <div class="meta-row"><span class="k">字数</span><span class="v">5,412 字</span></div>
+        <div class="meta-row"><span class="k">路径</span><span class="v mono">raw/web/karpathy-llm-wiki.html</span></div>
+        <div class="meta-row"><span class="k">最近编译</span><span class="v">3 天前 · 成功</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-head"><div class="card-title">由它派生的页面</div><span class="count-pill">4</span></div>
+      <div class="card-pad" style="padding-top:var(--sp-2);padding-bottom:var(--sp-2)">
+        <div class="derived-row"><a class="wikilink" href="#">LLM Wiki 模式</a><div class="tiny">概念页 · 45 分钟前</div></div>
+        <div class="derived-row"><a class="wikilink" href="#">摄入级联更新</a><div class="tiny">概念页 · 45 分钟前</div></div>
+        <div class="derived-row"><a class="wikilink" href="#">索引页与自动维护</a><div class="tiny">工具页 · 3 天前</div></div>
+        <div class="derived-row"><a class="wikilink" href="#">Karpathy（作者页）</a><div class="tiny">实体页 · 3 天前</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:var(--sp-5)">
+      <div class="card-pad">
+        <div class="callout callout-danger">
+          <b>删除会发生什么</b><br>它的 4 个派生页面不会被删掉，但入链会标为失效，并出现在体检报告里。删除随时可以恢复。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
