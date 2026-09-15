@@ -15,6 +15,12 @@ VERSION = "0.1.0"
 
 app = FastAPI(title="LLM Wiki", version=VERSION, docs_url="/api/docs", openapi_url="/api/openapi.json")
 
+# --- 路由注册 ---
+from llmwiki.api import ask, compile, events, lint, pages, settings, sources, system  # noqa: E402
+
+for module in (system, pages, sources, compile, ask, lint, settings, events):
+    app.include_router(module.router)
+
 
 @app.exception_handler(AppError)
 async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
