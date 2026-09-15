@@ -34,7 +34,7 @@ def _font_resources() -> DictionaryObject:
             NameObject("/Encoding"): NameObject("/WinAnsiEncoding"),
         }
     )
-    return DictionaryObject({NameObject("/Font"): font})
+    return DictionaryObject({NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})})
 
 
 def _write_pdf(path: Path, page_texts: list[str], *, title: str, author: str) -> None:

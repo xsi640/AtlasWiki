@@ -148,7 +148,7 @@ class CompileEngine:
             await self._publish_step(job, source, "读取素材原文")
             changes = await self._compile_one(job, store, source)
             manifest.items.extend(changes)
-            await self._queue.update_progress(
+            await self._update_progress(
                 job,
                 done=min(job.done + 1, job.total),
                 detail=f"{source.title} · 编译完成",
@@ -156,7 +156,7 @@ class CompileEngine:
 
         await asyncio.to_thread(self._write_manifest, store, manifest)
         await self._record_audit(store, manifest)
-        await self._queue.update_progress(job, detail=f"编译完成：{len(manifest.items)} 个页面变更")
+        await self._update_progress(job, detail=f"编译完成：{len(manifest.items)} 个页面变更")
 
     @staticmethod
     def _validate_source_ids(source_ids: list[str]) -> list[str]:
@@ -474,6 +474,34 @@ class CompileEngine:
         )
         if inspect.isawaitable(result):
             await result
+
+    async def _update_progress(
+        self,
+        job: Job,
+        *,
+        detail: str,
+        done: int | None = None,
+    ) -> None:
+        """队列内走标准进度接口；独立调用 compile_sources 时也能更新 Job。"""
+
+        if self._queue.get(job.id) is job:
+            await self._queue.update_progress(job, done=done, detail=detail)
+            return
+        if done is not None:
+            job.done = done
+        if job.total:
+            job.progress = min(1.0, job.done / job.total)
+        job.detail = detail
+        await self._queue.publish(
+            "job.progress",
+            job_id=job.id,
+            kind=job.kind,
+            status=job.status.value,
+            progress=job.progress,
+            total=job.total,
+            done=job.done,
+            detail=job.detail,
+        )
 
     async def _publish_step(self, job: Job, source: CompiledSource, step: str) -> None:
         """在标准任务事件中附加 source/step，便于围观页显示步骤。"""
