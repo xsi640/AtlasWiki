@@ -1,4 +1,4 @@
-"""应用装配：FastAPI + 静态托管 + 统一错误处理。"""
+"""应用装配：FastAPI + 路由注册 + 静态托管 + 统一错误处理。"""
 
 from __future__ import annotations
 
@@ -15,21 +15,16 @@ VERSION = "0.1.0"
 
 app = FastAPI(title="LLM Wiki", version=VERSION, docs_url="/api/docs", openapi_url="/api/openapi.json")
 
-# --- 路由注册 ---
-from llmwiki.api import ask, compile, events, lint, pages, settings, sources, system  # noqa: E402
 
-for module in (system, pages, sources, compile, ask, lint, settings, events):
-    app.include_router(module.router)
-
-
+# --- 统一错误处理 ---
 @app.exception_handler(AppError)
 async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
     return JSONResponse(status_code=exc.status_code, content=exc.to_payload())
 
 
+# --- 健康检查 ---
 @app.get("/api/system/health")
 async def health() -> dict:
-    """TASK-001 验收：返回版本、vault 状态、LLM 配置状态、队列状态。"""
     from llmwiki.jobs import job_queue  # 延迟导入避免循环
 
     settings = config_store.load()
@@ -53,7 +48,14 @@ async def health() -> dict:
     }
 
 
-# --- 静态托管（生产模式，frontend/dist 存在时） ---
+# --- 路由注册（必须在静态托管之前） ---
+from llmwiki.api import ask, events, lint, pages, settings, sources, system  # noqa: E402
+from llmwiki.api import compile as _compile  # noqa: E402
+
+for module in (system, pages, sources, _compile, ask, lint, settings, events):
+    app.include_router(module.router)
+
+# --- 静态托管（最后挂载，避免拦截 /api 路由） ---
 _dist = Path(__file__).resolve().parent.parent.parent.parent / "frontend" / "dist"
 if _dist.exists():
     app.mount("/", StaticFiles(directory=str(_dist), html=True), name="frontend")

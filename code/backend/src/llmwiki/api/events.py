@@ -71,6 +71,7 @@ async def event_stream(
     finally:
         event_task.cancel()
         heartbeat_task.cancel()
+        await asyncio.gather(event_task, heartbeat_task, return_exceptions=True)
 
 
 @router.get("/api/events")
@@ -78,10 +79,11 @@ async def events() -> StreamingResponse:
     """广播队列进度和业务事件，并每 15 秒发送一次心跳。"""
 
     return StreamingResponse(
-        event_stream(job_queue),
+        event_stream(job_queue, heartbeat_interval=HEARTBEAT_INTERVAL_S),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache, no-store",
+            "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
         },
     )
