@@ -198,7 +198,9 @@ export interface LintIssue {
   page: string;
   detail: string;
   suggestion: string;
+  repairable: boolean;
   ignored: boolean;
+  ignore_reason: string | null;
 }
 
 export interface LintReport {
