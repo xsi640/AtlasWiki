@@ -53,13 +53,13 @@ Wave 0 完成后，以 Wave 1 的最小切片构成闭环：
 
 | 任务编号 | 任务名称 | 模块 | 依赖项 | 验收标准 | 状态 |
 |---|---|---|---|---|---|
-| TASK-001 | 后端工程骨架与配置 | 公共 | 无 | `uv sync` 成功；`uv run python -m llmwiki` 启动后 `GET /api/system/health` 返回 200 且 `llm.configured` 正确反映当前 key 状态；密钥文件写入 `%APPDATA%\llmwiki\settings.json` 且仓库内无任何 key 痕迹；ruff 检查通过 | 待处理 |
-| TASK-002 | 前端工程骨架与设计系统移植 | 公共 | 无 | `npm run build` 成功产出 `frontend/dist`；`tokens.css` 与 `code/design/tokens.css` 内容一致；路由壳与顶栏渲染出 13 页占位；浅色/深色切换生效且 `<html data-theme>` 正确；无横向滚动（S 档顶栏不重叠） | 待处理 |
-| TASK-003 | Wiki 存储与链接层 | MODULE-003 | TASK-001 | 能创建 vault 骨架目录；frontmatter 读写往返一致（含中文与数组字段）；`[[链接]]` 解析正确（含 `[[名|显示文本]]`）；反向链接与出链计算正确（构造 5 页 8 边的样本断言结果）；原子写在写入过程中断时不产生半截文件；非法路径（`..`、绝对路径、盘符）被拒绝 | 待处理 |
-| TASK-004 | 写入队列与 SSE 事件总线 | 公共 | TASK-001 | 并发提交 10 个写任务时严格串行执行（断言执行区间不重叠）；任务进度可查询且与 `jobs.json` 一致；`GET /api/events` 能收到 `job.progress` 与心跳；多标签页同时订阅都能收到事件；进程重启后未完成任务的状态可从 `jobs.json` 恢复 | 待处理 |
-| TASK-005 | 审计与 git 底座 | MODULE-008 | TASK-003 | 每次写入任务完成后自动 commit，提交信息含任务类型与影响文件数；`wiki/log.md` 为 append-only 且记录操作类型、影响页面、原因；页面级 diff 可生成；`POST /api/settings/git/sync` 在无远端时返回 `E_GIT_FAILED` 且 `details.stderr` 非空；仓库无远端时不阻塞本地 commit | 待处理 |
-| TASK-006 | LLM 客户端与成本记账 | MODULE-009 | TASK-001 | 能调用 OpenAI 兼容端点并拿到响应；流式与非流式均可用；超时映射为 `E_LLM_TIMEOUT`、401/402 映射为 `E_LLM_AUTH`、429 映射为 `E_LLM_RATE_LIMIT`；每次调用按模型单价记账写入 `costs.json`；无 key 时返回 `E_LLM_NOT_CONFIGURED` 而非崩溃 | 待处理 |
-| TASK-007 | 知识规范 Schema 与提示词 | MODULE-007 | TASK-003 | 页面类型、frontmatter 字段、命名规范以代码常量与校验函数形式定义；`type`/`source_type` 非法值被校验拒绝；ingest / query / lint 三种操作的提示词模板可加载；页面名规范化函数对中文、空格、特殊字符、重名都能产出合法且唯一的文件名 | 待处理 |
+| TASK-001 | 后端工程骨架与配置 | 公共 | 无 | `uv sync` 成功；`uv run python -m llmwiki` 启动后 `GET /api/system/health` 返回 200 且 `llm.configured` 正确反映当前 key 状态；密钥文件写入 `%APPDATA%\llmwiki\settings.json` 且仓库内无任何 key 痕迹；ruff 检查通过 | 已完成 |
+| TASK-002 | 前端工程骨架与设计系统移植 | 公共 | 无 | `npm run build` 成功产出 `frontend/dist`；`tokens.css` 与 `code/design/tokens.css` 内容一致；路由壳与顶栏渲染出 13 页占位；浅色/深色切换生效且 `<html data-theme>` 正确；无横向滚动（S 档顶栏不重叠） | 已完成 |
+| TASK-003 | Wiki 存储与链接层 | MODULE-003 | TASK-001 | 能创建 vault 骨架目录；frontmatter 读写往返一致（含中文与数组字段）；`[[链接]]` 解析正确（含 `[[名|显示文本]]`）；反向链接与出链计算正确（构造 5 页 8 边的样本断言结果）；原子写在写入过程中断时不产生半截文件；非法路径（`..`、绝对路径、盘符）被拒绝 | 已完成 |
+| TASK-004 | 写入队列与 SSE 事件总线 | 公共 | TASK-001 | 并发提交 10 个写任务时严格串行执行（断言执行区间不重叠）；任务进度可查询且与 `jobs.json` 一致；`GET /api/events` 能收到 `job.progress` 与心跳；多标签页同时订阅都能收到事件；进程重启后未完成任务的状态可从 `jobs.json` 恢复 | 已完成 |
+| TASK-005 | 审计与 git 底座 | MODULE-008 | TASK-003 | 每次写入任务完成后自动 commit，提交信息含任务类型与影响文件数；`wiki/log.md` 为 append-only 且记录操作类型、影响页面、原因；页面级 diff 可生成；`POST /api/settings/git/sync` 在无远端时返回 `E_GIT_FAILED` 且 `details.stderr` 非空；仓库无远端时不阻塞本地 commit | 已完成 |
+| TASK-006 | LLM 客户端与成本记账 | MODULE-009 | TASK-001 | 能调用 OpenAI 兼容端点并拿到响应；流式与非流式均可用；超时映射为 `E_LLM_TIMEOUT`、401/402 映射为 `E_LLM_AUTH`、429 映射为 `E_LLM_RATE_LIMIT`；每次调用按模型单价记账写入 `costs.json`；无 key 时返回 `E_LLM_NOT_CONFIGURED` 而非崩溃 | 已完成 |
+| TASK-007 | 知识规范 Schema 与提示词 | MODULE-007 | TASK-003 | 页面类型、frontmatter 字段、命名规范以代码常量与校验函数形式定义；`type`/`source_type` 非法值被校验拒绝；ingest / query / lint 三种操作的提示词模板可加载；页面名规范化函数对中文、空格、特殊字符、重名都能产出合法且唯一的文件名 | 已完成 |
 
 ### Wave 1 · Ingest 动作
 
@@ -159,8 +159,10 @@ TASK-001 → TASK-003 → TASK-007 → TASK-013 → TASK-016 → TASK-018 → TA
 
 | 状态 | 数量 | 任务 |
 |---|---|---|
-| 待处理 | 36 | TASK-001 ~ TASK-036 |
-| 进行中 | 0 | — |
+| 已完成 | 7 | TASK-001 ~ TASK-007（Wave 0 公共地基） |
+| 进行中 | 9 | TASK-008 ~ TASK-011、TASK-013（G2/G3 并行中） |
+| 待处理 | 20 | TASK-012、TASK-014 ~ TASK-036 |
+
 | 待验证 | 0 | — |
 | 已完成 | 0 | — |
 | 已阻塞 | 0 | — |
