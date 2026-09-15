@@ -1,0 +1,28 @@
+# —— 运行期垃圾（TASK-036：覆盖运行期垃圾，但不忽略知识内容）——
+.tmp/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / 前端构建产物
+node_modules/
+code/frontend/dist/
+
+# 知识库运行时状态（ADR-006：不属于知识内容）
+# 注意：默认 vault 在仓库之外（%USERPROFILE%\llmwiki-vault），这里只是兜底，
+# 防止有人在仓库内建库时把状态文件提交上来。
+.llmwiki/
+.tmp
+.ruff_cache
+
+# 编辑器与系统
+.idea/
+.vscode/
+Thumbs.db
+Desktop.ini

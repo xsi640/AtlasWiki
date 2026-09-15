@@ -72,9 +72,8 @@ code/docs/api-design.md
 
 阶段 3B 输出的代码位于仓库的 `code/` 目录：
 
-```text
-code/backend    Maven + Spring Boot 后端
-code/frontend   Vite + Vue 前端
+code/backend    Python 3.12 + FastAPI 后端（uv 管理依赖）
+code/frontend   React 19 + TypeScript + Vite 前端（构建产物交后端托管）
 code/deploy     部署配置与运行手册
 code/scripts    端到端验证脚本
 ```
