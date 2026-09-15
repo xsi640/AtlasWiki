@@ -11,7 +11,10 @@ from pydantic import BaseModel, Field
 
 
 def _app_config_dir() -> Path:
-    """返回应用配置目录，跨平台。"""
+    """返回应用配置目录，跨平台；LLMWIKI_CONFIG_DIR 供测试与端到端脚本隔离。"""
+    override = os.environ.get("LLMWIKI_CONFIG_DIR", "").strip()
+    if override:
+        return Path(override).expanduser()
     if sys.platform == "win32":
         base = os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")
     elif sys.platform == "darwin":
@@ -30,6 +33,7 @@ class LlmSettings(BaseModel):
     api_key: str = ""
     timeout_s: int = 120
     max_cost_per_task_usd: float = 1.0
+    segment_threshold_chars: int = 24000
 
 
 class GitSettings(BaseModel):

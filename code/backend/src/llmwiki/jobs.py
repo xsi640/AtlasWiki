@@ -40,6 +40,8 @@ class Job:
     created_at: float = field(default_factory=time.time)
     started_at: float | None = None
     finished_at: float | None = None
+    # 围观页快照的扩展状态（当前素材/页面、步骤列表）；随 jobs.json 持久化。
+    meta: dict[str, Any] = field(default_factory=dict)
 
 
 JobFunc = Callable[[Job], Coroutine[Any, Any, None]]

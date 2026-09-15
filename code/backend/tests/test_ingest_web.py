@@ -11,7 +11,6 @@ from llmwiki.errors import AppError, ErrorCode
 from llmwiki.ingest.web import fetch_web
 from llmwiki.schema import MaterialKind, MaterialStatus
 
-
 _SAMPLE_HTML = """\
 <html>
 <head><title>Understanding LLM Wiki</title></head>

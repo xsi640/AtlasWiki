@@ -10,14 +10,15 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from llmwiki.audit import AuditService
-from llmwiki.compile.prompts import build_compile_messages
+from llmwiki.compile.prompts import build_compile_messages, build_segment_messages
 from llmwiki.config import ConfigStore
 from llmwiki.errors import AppError, ErrorCode
 from llmwiki.jobs import Job, JobQueue, job_queue
 from llmwiki.llm import complete as default_llm_complete
+from llmwiki.llm.cost import read_job_cost
 from llmwiki.schema import MaterialStatus, PageType, normalize_page_name
 from llmwiki.workspace.links import extract_links
-from llmwiki.workspace.store import RESERVED_PAGE_NAMES, PageDraft, atomic_write_bytes
+from llmwiki.workspace.store import RESERVED_PAGE_NAMES, PageDraft, atomic_write_bytes, utc_now
 from llmwiki.workspace.store import WikiStore as MarkdownStore
 
 
@@ -59,6 +60,8 @@ class CompiledPage:
     zone: str
     content: str
     created: bool
+    zone_before: str | None = None
+    contradictions: tuple[dict[str, str], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,6 +73,9 @@ class CompileChange:
     page_type: PageType
     action: str
     path: Path
+    zone: str = ""
+    zone_before: str | None = None
+    has_diff: bool = False
 
 
 @dataclass(slots=True)
@@ -78,7 +84,7 @@ class _CompileManifest:
 
     job_id: str
     items: list[CompileChange] = field(default_factory=list)
-    failed_sources: list[str] = field(default_factory=list)
+    failed_sources: list[dict[str, str]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """转换为 JSON 可序列化对象。"""
@@ -95,6 +101,15 @@ class _CompileManifest:
 
 class CompileEngine:
     """读素材、调用 LLM、校验结构、原子写页面，并串行提交到写入队列。"""
+
+    # 围观页步骤条使用的规范步骤名（STATE-007）。
+    CANONICAL_STEPS = ("读取素材原文", "生成摘要页", "更新概念页与实体页", "重建索引与互链")
+    _STEP_INDEX = {
+        "读取素材原文": 0,
+        "调用 LLM 生成结构化结果": 1,
+        "写入并互链 wiki 页面": 2,
+        "更新索引完成": 3,
+    }
 
     def __init__(
         self,
@@ -137,26 +152,73 @@ class CompileEngine:
         vault_path: str | Path,
         source_ids: list[str],
     ) -> None:
-        """在写入队列 worker 中顺序编译多个素材。"""
+        """在写入队列 worker 中顺序编译多个素材；单个失败不中断其余素材。"""
 
         normalized_ids = self._validate_source_ids(source_ids)
         store = await asyncio.to_thread(self._make_store, vault_path)
         manifest = _CompileManifest(job_id=job.id)
+        first_error: AppError | None = None
 
         for source_id in normalized_ids:
-            source = await asyncio.to_thread(self._read_source, store, source_id)
-            await self._publish_step(job, source, "读取素材原文")
-            changes = await self._compile_one(job, store, source)
+            source: CompiledSource | None = None
+            try:
+                source = await asyncio.to_thread(self._read_source, store, source_id)
+                await self._publish_step(job, source, "读取素材原文")
+                changes = await self._compile_one(job, store, source)
+            except AppError as exc:
+                manifest.failed_sources.append(
+                    {"id": source_id, "title": source.title if source else source_id, "reason": exc.message}
+                )
+                if source is not None:
+                    await asyncio.to_thread(
+                        self._mark_source, store, source, ok=False, failure_reason=exc.message
+                    )
+                first_error = first_error or exc
+                continue
+
             manifest.items.extend(changes)
+            await asyncio.to_thread(self._mark_source, store, source, ok=True)
             await self._update_progress(
                 job,
                 done=min(job.done + 1, job.total),
                 detail=f"{source.title} · 编译完成",
             )
 
+        if manifest.failed_sources and not manifest.items:
+            # 全部素材都失败时任务必须整体失败，并保留第一个业务错误。
+            assert first_error is not None
+            raise first_error
+
         await asyncio.to_thread(self._write_manifest, store, manifest)
         await self._record_audit(store, manifest)
-        await self._update_progress(job, detail=f"编译完成：{len(manifest.items)} 个页面变更")
+        self._finish_steps(job)
+        failed_note = (
+            f"，{len(manifest.failed_sources)} 个素材失败" if manifest.failed_sources else ""
+        )
+        await self._update_progress(
+            job, detail=f"编译完成：{len(manifest.items)} 个页面变更{failed_note}"
+        )
+
+    @staticmethod
+    def _mark_source(
+        store: MarkdownStore,
+        source: CompiledSource,
+        *,
+        ok: bool,
+        failure_reason: str | None = None,
+    ) -> None:
+        """编译后回写素材生命周期元数据：compiled_at / failed 原因。"""
+
+        document = store.read_markdown(source.relative_path)
+        metadata = dict(document.metadata)
+        if ok:
+            metadata["status"] = MaterialStatus.NORMAL.value
+            metadata["compiled_at"] = utc_now()
+            metadata["failure_reason"] = None
+        else:
+            metadata["status"] = MaterialStatus.FAILED.value
+            metadata["failure_reason"] = failure_reason
+        store.write_markdown(source.relative_path, metadata, document.content, update_timestamp=True)
 
     @staticmethod
     def _validate_source_ids(source_ids: list[str]) -> list[str]:
@@ -216,9 +278,9 @@ class CompileEngine:
     async def _compile_one(self, job: Job, store: MarkdownStore, source: CompiledSource) -> list[CompileChange]:
         """执行一个素材的读取 → LLM → 校验 → 原子写 → 索引流程。"""
 
+        messages = await self._messages_for(job, store, source)
         await self._publish_step(job, source, "调用 LLM 生成结构化结果")
-        messages = await asyncio.to_thread(self._build_messages, store, source)
-        raw_output = await self._call_llm(messages)
+        raw_output = await self._call_llm(job, store, messages)
         payload = _parse_llm_payload(raw_output)
         # 校验、命名冲突处理和互链补全都发生在第一次磁盘写入之前。
         pages = await asyncio.to_thread(self._plan_pages, store, source, payload)
@@ -227,19 +289,77 @@ class CompileEngine:
         changes: list[CompileChange] = []
         for page in pages:
             written = await asyncio.to_thread(self._write_page, store, source, page)
+            action = "created" if page.created else self._page_action(page)
             changes.append(
                 CompileChange(
                     name=written.name,
                     title=written.title,
                     page_type=page.page_type,
-                    action="created" if page.created else "updated",
+                    action=action,
                     path=written.relative_path,
+                    zone=page.zone,
+                    zone_before=page.zone_before,
+                    has_diff=action != "created",
                 )
             )
+            job.meta["current_page"] = written.name
 
         await asyncio.to_thread(self._update_index_and_links, store)
         await self._publish_step(job, source, "更新索引完成")
         return changes
+
+    @staticmethod
+    def _page_action(page: CompiledPage) -> str:
+        """同源更新时分区变了记 zone_changed，否则记 updated（TASK-014）。"""
+
+        if page.zone_before is not None and page.zone_before != page.zone:
+            return "zone_changed"
+        return "updated"
+
+    async def _messages_for(
+        self,
+        job: Job,
+        store: MarkdownStore,
+        source: CompiledSource,
+    ) -> list[dict[str, str]]:
+        """超阈值素材先分段摘要再合成请求；否则单次请求（TASK-015）。"""
+
+        threshold = self.config_store.load().llm.segment_threshold_chars
+        if len(source.content) <= max(threshold, 1):
+            return await asyncio.to_thread(self._build_messages, store, source)
+
+        segments = _segment_content(source.content, threshold)
+        partials: list[dict[str, Any]] = []
+        for index, segment in enumerate(segments, start=1):
+            await self._publish_step(job, source, f"分段摘要 {index}/{len(segments)}")
+            segment_messages = build_segment_messages(
+                source_title=source.title,
+                segment=segment,
+                index=index,
+                total=len(segments),
+            )
+            raw = await self._call_llm(job, store, segment_messages)
+            partials.append(_parse_segment_payload(raw))
+        digest = _segment_digest(partials)
+        return build_compile_messages(
+            source_title=source.title,
+            source_content=digest,
+            existing_pages=store.list_page_names(),
+        )
+
+    async def _ensure_cost_budget(self, job: Job, store: MarkdownStore) -> None:
+        """单任务累计花费超过上限时中止（TASK-015 / ADR-012）。"""
+
+        limit = self.config_store.load().llm.max_cost_per_task_usd
+        if limit <= 0:
+            return
+        spent = await asyncio.to_thread(read_job_cost, store.vault, job.id)
+        if spent >= limit:
+            raise AppError(
+                ErrorCode.VALIDATION,
+                f"单任务成本已达上限 {limit:.2f} USD（已花费 {spent:.4f} USD），任务中止",
+                {"limit_usd": limit, "spent_usd": spent, "job_id": job.id},
+            )
 
     def _build_messages(self, store: MarkdownStore, source: CompiledSource) -> list[dict[str, str]]:
         """构造请求，不读取页面正文，避免大库请求失控。"""
@@ -250,8 +370,10 @@ class CompileEngine:
             existing_pages=store.list_page_names(),
         )
 
-    async def _call_llm(self, messages: list[dict[str, str]]) -> str:
+    async def _call_llm(self, job: Job, store: MarkdownStore, messages: list[dict[str, str]]) -> str:
         """调用注入的 mock/客户端，或在生产路径走冻结的 complete 契约。"""
+
+        await self._ensure_cost_budget(job, store)
 
         if self._llm is not None:
             completer = getattr(self._llm, "complete", None)
@@ -274,7 +396,9 @@ class CompileEngine:
                 "LLM API key 未配置",
                 {"base_url": settings.base_url},
             )
-        return await default_llm_complete(messages, json_mode=True, operation="compile", job_id=None)
+        return await default_llm_complete(
+            messages, json_mode=True, operation="compile", job_id=job.id
+        )
 
     def _plan_pages(
         self,
@@ -299,6 +423,7 @@ class CompileEngine:
             source_id=source.source_id,
         )
         used_names.add(summary_name)
+        summary_zone_before = self._zone_before(existing, summary_name)
 
         pages = [
             CompiledPage(
@@ -308,6 +433,7 @@ class CompileEngine:
                 zone=summary_zone,
                 content=summary_content,
                 created=summary_name not in existing,
+                zone_before=summary_zone_before,
             )
         ]
         child_names: list[str] = []
@@ -341,11 +467,12 @@ class CompileEngine:
                             required_links=[summary_name],
                         ),
                         created=name not in existing,
+                        zone_before=self._zone_before(existing, name),
                     )
                 )
 
         summary_content = _with_links(summary_content, declared_links=[], required_links=child_names)
-        contradictions = payload.get("contradictions", [])
+        contradictions = _validate_contradictions(payload.get("contradictions", []))
         if contradictions:
             summary_content = _append_contradictions(summary_content, contradictions)
         pages[0] = CompiledPage(
@@ -355,8 +482,19 @@ class CompileEngine:
             zone=summary_zone,
             content=summary_content,
             created=summary_name not in existing,
+            zone_before=summary_zone_before,
+            contradictions=tuple(contradictions),
         )
         return pages
+
+    @staticmethod
+    def _zone_before(existing: dict[str, Any], name: str) -> str | None:
+        """同源更新时返回旧分区，供变更清单展示 zone_changed。"""
+
+        page = existing.get(name)
+        if page is None:
+            return None
+        return str(page.metadata.get("zone") or "") or None
 
     def _resolve_name(
         self,
@@ -410,6 +548,10 @@ class CompileEngine:
     ) -> Any:
         """原子写入一个页面，links 由存储层从正文重新解析。"""
 
+        extra_metadata: dict[str, Any] = {}
+        if page.contradictions:
+            # 矛盾进 frontmatter，供体检扫描器直接消费（TASK-014）。
+            extra_metadata["contradictions"] = list(page.contradictions)
         return store.write_page(
             PageDraft(
                 name=page.name,
@@ -420,6 +562,7 @@ class CompileEngine:
                 content=page.content,
                 status="active",
                 origin_source=source.source_id,
+                metadata=extra_metadata,
             )
         )
 
@@ -506,6 +649,8 @@ class CompileEngine:
     async def _publish_step(self, job: Job, source: CompiledSource, step: str) -> None:
         """在标准任务事件中附加 source/step，便于围观页显示步骤。"""
 
+        self._advance_steps(job, step)
+        job.meta["current_source"] = {"id": source.source_id, "title": source.title}
         await self._queue.publish(
             "job.progress",
             job_id=job.id,
@@ -518,6 +663,30 @@ class CompileEngine:
             source_id=source.source_id,
             step=step,
         )
+
+    @classmethod
+    def _advance_steps(cls, job: Job, step: str) -> None:
+        """把发布出的步骤映射到规范步骤条并写入 job.meta（断线重连恢复用）。"""
+
+        steps: list[dict[str, str]] = job.meta.setdefault("steps") or [
+            {"name": name, "state": "pending"} for name in cls.CANONICAL_STEPS
+        ]
+        index = 1 if step.startswith("分段摘要") else cls._STEP_INDEX.get(step, -1)
+        if index < 0:
+            job.meta["steps"] = steps
+            return
+        for position, item in enumerate(steps):
+            item["state"] = "done" if position < index else "running" if position == index else item.get("state", "pending")
+        job.meta["steps"] = steps
+
+    @classmethod
+    def _finish_steps(cls, job: Job) -> None:
+        """任务收尾时把步骤条全部置为完成。"""
+
+        steps = job.meta.get("steps")
+        if steps:
+            for item in steps:
+                item["state"] = "done"
 
 
 def _parse_llm_payload(raw_output: str) -> dict[str, Any]:
@@ -608,11 +777,15 @@ def _with_links(
     return f"{content}\n\n**相关页面**：{links_text}\n"
 
 
-def _append_contradictions(content: str, contradictions: list[Any]) -> str:
-    """先把矛盾作为摘要页记录，完整增量标记由 TASK-014 扩展。"""
+def _validate_contradictions(raw: Any) -> list[dict[str, str]]:
+    """校验 contradictions 数组；空数组返回空列表。"""
 
+    if raw is None:
+        return []
+    if not isinstance(raw, list):
+        raise AppError(ErrorCode.PARSE_FAILED, "contradictions 必须是数组")
     valid: list[tuple[str, str]] = []
-    for item in contradictions:
+    for item in raw:
         if not isinstance(item, dict):
             raise AppError(ErrorCode.PARSE_FAILED, "contradictions 项必须是对象")
         page = normalize_page_name(str(item.get("page", "")))
@@ -620,8 +793,71 @@ def _append_contradictions(content: str, contradictions: list[Any]) -> str:
         if not page or not reason:
             raise AppError(ErrorCode.PARSE_FAILED, "contradictions 的 page/reason 不能为空")
         valid.append((page, reason))
-    if not valid:
+    return [{"page": page, "reason": reason} for page, reason in valid]
+
+
+def _append_contradictions(content: str, contradictions: list[dict[str, str]]) -> str:
+    """把矛盾作为摘要页正文记录；frontmatter 副本由 _write_page 写入。"""
+
+    if not contradictions:
         return content
     lines = ["", "## 矛盾记录", ""]
-    lines.extend(f"- [[{page}]]：{reason}" for page, reason in valid)
+    lines.extend(f"- [[{item['page']}]]：{item['reason']}" for item in contradictions)
     return content + "\n" + "\n".join(lines) + "\n"
+
+
+def _segment_content(content: str, threshold: int) -> list[str]:
+    """按段落边界把长文切成不超过 threshold 的片段。"""
+
+    limit = max(int(threshold), 1)
+    segments: list[str] = []
+    buffer: list[str] = []
+    size = 0
+    for paragraph in content.split("\n\n"):
+        paragraph_length = len(paragraph) + 2
+        if buffer and size + paragraph_length > limit:
+            segments.append("\n\n".join(buffer))
+            buffer, size = [], 0
+        buffer.append(paragraph)
+        size += paragraph_length
+    if buffer:
+        segments.append("\n\n".join(buffer))
+    return segments or [content]
+
+
+def _parse_segment_payload(raw_output: str) -> dict[str, Any]:
+    """解析分段摘要输出；summary 缺失视为模型输出不合法。"""
+
+    payload = _parse_llm_payload(raw_output)
+    summary = str(payload.get("summary", "")).strip()
+    if not summary:
+        raise AppError(ErrorCode.PARSE_FAILED, "分段摘要输出缺少 summary 字段")
+
+    def _names(key: str) -> list[str]:
+        values = payload.get(key, [])
+        if not isinstance(values, list):
+            raise AppError(ErrorCode.PARSE_FAILED, f"分段摘要的 {key} 必须是数组")
+        return [str(item).strip() for item in values if str(item).strip()]
+
+    return {"summary": summary, "concepts": _names("concepts"), "entities": _names("entities")}
+
+
+def _segment_digest(partials: list[dict[str, Any]]) -> str:
+    """把各段摘要合成为一次最终编译请求可用的素材摘要。"""
+
+    blocks = [
+        f"【片段 {index}】\n{str(partial.get('summary', '')).strip()}"
+        for index, partial in enumerate(partials, start=1)
+    ]
+    concepts = list(dict.fromkeys(
+        name for partial in partials for name in partial.get("concepts", [])
+    ))
+    entities = list(dict.fromkeys(
+        name for partial in partials for name in partial.get("entities", [])
+    ))
+    tail = ""
+    if concepts:
+        tail += f"\n\n高频候选概念：{'、'.join(concepts)}"
+    if entities:
+        tail += f"\n\n高频候选实体：{'、'.join(entities)}"
+    return "\n\n".join(blocks) + tail

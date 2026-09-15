@@ -47,7 +47,7 @@ export function SourceDetailPage() {
 
       {source.asset_path && (
         <p>
-          <a href={`/api/sources/${source.id}/asset`} download>
+          <a href={`/api/sources/${source.id}/asset?download=1`} download>
             下载原件
           </a>
         </p>

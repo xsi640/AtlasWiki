@@ -68,9 +68,10 @@ def client() -> TestClient:
     async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
         return JSONResponse(status_code=exc.status_code, content=exc.to_payload())
 
-    from llmwiki.api.settings import router
+    from llmwiki.api.settings import root_router, router
 
     app.include_router(router)
+    app.include_router(root_router)
     app.include_router(system_router)
     return TestClient(app)
 
@@ -103,6 +104,39 @@ def test_get_settings_masks_api_key_and_detects_remote(
     assert payload["llm"]["key_hint"] == "1234"
     assert "secret-key-1234" not in json.dumps(payload)
     assert payload["git"]["has_remote"] is True
+
+
+def test_update_api_key_writes_hint_without_full_value(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """API-039：密钥单独写入，只回显末 4 位，完整值不进任何响应。"""
+    install_settings(tmp_path, monkeypatch)
+
+    with client() as test_client:
+        response = test_client.put("/api/settings/api-key", json={"api_key": "sk-new-secret-9999"})
+        assert response.status_code == 200
+        payload = response.json()
+
+        empty = test_client.put("/api/settings/api-key", json={"api_key": "   "})
+        assert empty.status_code == 422
+
+    assert payload == {"api_key_set": True, "api_key_hint": "9999"}
+    persisted = json.loads(config_store.path.read_text(encoding="utf-8"))
+    assert persisted["llm"]["api_key"] == "sk-new-secret-9999"
+
+
+def test_costs_design_path_alias(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """API-042：/api/costs 与 /api/settings/costs 返回同一份数据。"""
+    install_settings(tmp_path, monkeypatch)
+
+    with client() as test_client:
+        alias = test_client.get("/api/costs")
+        canonical = test_client.get("/api/settings/costs")
+
+    assert alias.status_code == 200
+    assert alias.json() == canonical.json()
+    assert alias.json()["currency"] == "USD"
 
 
 def test_update_settings_round_trip_keeps_empty_key(

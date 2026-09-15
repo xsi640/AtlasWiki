@@ -17,6 +17,8 @@ from llmwiki.llm.cost import get_cost_summary
 from llmwiki.llm.cost import get_costs as get_cost_records
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
+# api-design.md 中成本看板挂在 /api/costs；这里保留同一实现的双前缀别名。
+root_router = APIRouter(prefix="/api", tags=["settings"])
 
 
 def _key_hint(value: str) -> str:
@@ -130,6 +132,28 @@ async def update_settings(body: UpdateSettingsRequest) -> dict[str, Any]:
 
     config_store.save(settings)
     return await get_settings()
+
+
+class ApiKeyRequest(BaseModel):
+    """API-039：单独写入密钥，避免与其他设置耦合。"""
+
+    api_key: str
+
+
+@router.put("/api-key")
+async def update_api_key(body: ApiKeyRequest) -> dict[str, Any]:
+    """单独保存 API key 到仓库外密钥文件（ADR-010）。"""
+
+    if not body.api_key.strip():
+        raise AppError(
+            ErrorCode.VALIDATION,
+            "api_key 不能为空",
+            {"fields": [{"field": "api_key", "reason": "必填"}]},
+        )
+    settings = config_store.load()
+    settings.llm.api_key = body.api_key.strip()
+    config_store.save(settings)
+    return {"api_key_set": True, "api_key_hint": _key_hint(settings.llm.api_key)}
 
 
 def _chat_url(base_url: str) -> str:
@@ -284,3 +308,9 @@ async def get_costs() -> dict[str, Any]:
 async def get_cost_summary_api() -> dict[str, Any]:
     """保留 summary 视图，方便前端复用 llm.cost 的权威聚合。"""
     return await get_cost_summary()
+
+
+@root_router.get("/costs")
+async def get_costs_alias() -> dict[str, Any]:
+    """API-042 的设计路径；与 /api/settings/costs 返回同一份数据。"""
+    return await get_costs()

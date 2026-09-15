@@ -207,6 +207,22 @@ async def get_costs() -> list[dict[str, Any]]:
         return await asyncio.to_thread(_read_records, _costs_path())
 
 
+def read_job_cost(vault_path: str | Path, job_id: str) -> float:
+    """从指定 vault 的成本账本汇总单个任务的累计花费（只读，不经过全局配置）。"""
+
+    path = Path(vault_path).expanduser() / ".llmwiki" / "costs.json"
+    if not path.is_file():
+        return 0.0
+    try:
+        records = _read_records(path)
+    except (OSError, ValueError, json.JSONDecodeError):
+        return 0.0
+    return round(
+        sum(float(record.get("cost", 0)) for record in records if record.get("job_id") == job_id),
+        8,
+    )
+
+
 async def get_cost_summary() -> dict[str, Any]:
     """提供成本看板所需的完整聚合结构。"""
     records = await get_costs()

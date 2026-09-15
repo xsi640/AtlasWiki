@@ -54,6 +54,8 @@ from llmwiki.api import compile as _compile  # noqa: E402
 
 for module in (system, pages, sources, _compile, ask, lint, settings, events):
     app.include_router(module.router)
+# settings 的 /api/costs 设计路径别名（与 /api/settings/costs 同一实现）。
+app.include_router(settings.root_router)
 
 # --- 静态托管（最后挂载，避免拦截 /api 路由） ---
 _dist = Path(__file__).resolve().parent.parent.parent.parent / "frontend" / "dist"

@@ -247,3 +247,151 @@ def test_manifest_serializes_runtime_changes(tmp_path: Path) -> None:
 
     assert data["items"][0]["path"] == "wiki/concepts/页面.md"
     assert data["items"][0]["page_type"] == "concept"
+
+
+# ---------------------------------------------------------------------------
+# TASK-014 / TASK-015 扩展验收
+# ---------------------------------------------------------------------------
+
+
+async def test_contradictions_land_in_frontmatter_for_lint(tmp_path: Path) -> None:
+    """模型报出的矛盾要进摘要页 frontmatter，供体检扫描器消费。"""
+    output = json.dumps(
+        {
+            "summary_page": {"title": "共识摘要", "zone": "分布式", "content": "存在分歧。"},
+            "concept_pages": [],
+            "entity_pages": [],
+            "contradictions": [{"page": "Raft", "reason": "与既有页面的超时结论冲突"}],
+        },
+        ensure_ascii=False,
+    )
+    vault = tmp_path / "vault"
+    write_source(vault)
+    job, _queue, _llm, _audit, _events = await run_engine(tmp_path, vault, output)
+
+    assert job.status.value == "done"
+    store = MarkdownStore(vault)
+    summary = store.read_page("共识摘要")
+    assert summary.metadata["contradictions"] == [
+        {"page": "Raft", "reason": "与既有页面的超时结论冲突"}
+    ]
+    assert "## 矛盾记录" in summary.content
+
+
+def _segmented_output(segment_digest: str) -> str:
+    return json.dumps(
+        {
+            "summary_page": {
+                "title": "长文摘要",
+                "zone": "长文",
+                "content": f"综合结果：{segment_digest}",
+            },
+            "concept_pages": [],
+            "entity_pages": [],
+        },
+        ensure_ascii=False,
+    )
+
+
+class RecordingSegmentLlm:
+    """对分段摘要请求与最终合成请求返回不同输出。"""
+
+    def __init__(self, final_output: str) -> None:
+        self.final_output = final_output
+        self.segment_requests: list[str] = []
+        self.final_requests: list[str] = []
+
+    async def complete(self, messages: list[dict[str, str]], *, json_mode: bool) -> str:
+        system_prompt = messages[0]["content"]
+        if "分段摘要器" in system_prompt:
+            self.segment_requests.append(messages[1]["content"])
+            return json.dumps(
+                {"summary": "片段要点", "concepts": ["概念甲"], "entities": []},
+                ensure_ascii=False,
+            )
+        self.final_requests.append(messages[1]["content"])
+        return self.final_output
+
+
+async def test_long_source_is_segmented_then_synthesized(tmp_path: Path) -> None:
+    """超过阈值的长文走「分段摘要 → 合成」两阶段，短文保持单次调用。"""
+    vault = tmp_path / "vault"
+    config = make_config(tmp_path, vault, api_key="mock-key")
+    # 把阈值压到很小，迫使一篇 600 字素材拆成多段。
+    settings = config.load()
+    settings.llm.segment_threshold_chars = 100
+    config.save(settings)
+
+    store = MarkdownStore(vault, initialized=True)
+    long_content = "\n\n".join(f"第{index}段讨论共识协议的细节与权衡。" * 2 for index in range(20))
+    assert len(long_content) > 100
+    store.write_markdown(
+        "raw/长文-111111111111.md",
+        {"id": "111111111111", "title": "长文", "kind": "note", "status": "normal"},
+        long_content,
+    )
+
+    queue = RecordingJobQueue(config_store_override=config)
+    llm = RecordingSegmentLlm(_segmented_output("全部要点"))
+    audit = MockAudit()
+    engine = CompileEngine(llm=llm, audit_service=audit, queue=queue, config_store_override=config)
+    job = await engine.start_compile(vault, ["111111111111"])
+    await queue.join()
+
+    assert job.status.value == "done"
+    # 分段请求 ≥ 2 段，最终合成请求恰好 1 次。
+    assert len(llm.segment_requests) >= 2
+    assert len(llm.final_requests) == 1
+    # 合成请求包含各段摘要与候选概念。
+    assert "片段要点" in llm.final_requests[0]
+    assert "概念甲" in llm.final_requests[0]
+    assert MarkdownStore(vault).read_page("长文摘要")
+
+
+async def test_same_source_recompile_reports_zone_change(tmp_path: Path) -> None:
+    """同源重编译且分区变化时，变更清单记 zone_changed 并保留旧分区。"""
+    vault = tmp_path / "vault"
+
+    def output_with_zone(zone: str) -> str:
+        payload = json.loads(valid_output())
+        payload["summary_page"]["zone"] = zone
+        return json.dumps(payload, ensure_ascii=False)
+
+    write_source(vault)
+    config = make_config(tmp_path, vault, api_key="mock-key")
+    queue = RecordingJobQueue(config_store_override=config)
+
+    engine = CompileEngine(
+        llm=MockLlm(output_with_zone("分布式系统")),
+        audit_service=MockAudit(),
+        queue=queue,
+        config_store_override=config,
+    )
+    job = await engine.start_compile(vault, ["src-1"])
+    await queue.join()
+    assert job.status.value == "done"
+
+    # 把素材标回待编译，再用不同分区重编译。
+    store = MarkdownStore(vault)
+    document = store.read_markdown("raw/分布式系统笔记-src-1.md")
+    store.write_markdown(
+        "raw/分布式系统笔记-src-1.md",
+        {**document.metadata, "status": "stale"},
+        document.content,
+    )
+    engine2 = CompileEngine(
+        llm=MockLlm(output_with_zone("新分区")),
+        audit_service=MockAudit(),
+        queue=queue,
+        config_store_override=config,
+    )
+    job2 = await engine2.start_compile(vault, ["src-1"])
+    await queue.join()
+    assert job2.status.value == "done"
+
+    manifest_path = vault / ".llmwiki" / "compile" / f"{job2.id}.json"
+    manifest = json.loads(manifest_path.read_text("utf-8"))
+    summary_change = next(item for item in manifest["items"] if item["name"] == "共识算法摘要")
+    assert summary_change["action"] == "zone_changed"
+    assert summary_change["zone_before"] == "分布式系统"
+    assert summary_change["zone"] == "新分区"

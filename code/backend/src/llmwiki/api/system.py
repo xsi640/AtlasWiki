@@ -18,17 +18,39 @@ async def bootstrap() -> dict:
     """冷启动探测：判定空库（BRANCH-001）、待处理体检数与失败素材数。"""
     from pathlib import Path
 
+    from llmwiki.ingest.service import source_service
+    from llmwiki.lint import read_report
+    from llmwiki.workspace.store import WikiStore
+
     settings = config_store.load()
-    vault = Path(settings.vault_path) if settings.vault_path else None
+    vault = Path(settings.vault_path).expanduser().resolve() if settings.vault_path else None
     wiki_dir = vault / "wiki" if vault else None
-    page_count = len(list(wiki_dir.rglob("*.md"))) if wiki_dir and wiki_dir.exists() else 0
+    if vault and wiki_dir and wiki_dir.exists():
+        page_count = len(WikiStore(vault).list_page_names())
+    else:
+        page_count = 0
+
+    pending_lint = 0
+    failed_sources = stale_sources = 0
+    if vault and vault.is_dir():
+        report = read_report(vault)
+        if report:
+            pending_lint = sum(
+                1
+                for issue in report.get("issues", [])
+                if isinstance(issue, dict) and not issue.get("ignored")
+            )
+        counts = (await source_service.list_sources(vault, page=1, size=1))["counts"]
+        failed_sources = counts.get("failed", 0)
+        stale_sources = counts.get("stale", 0)
+
     return {
         "vault_initialized": bool(vault and vault.exists()),
         "is_empty": page_count == 0,
         "page_count": page_count,
-        "pending_lint_count": 0,
-        "failed_source_count": 0,
-        "stale_source_count": 0,
+        "pending_lint_count": pending_lint,
+        "failed_source_count": failed_sources,
+        "stale_source_count": stale_sources,
     }
 
 
