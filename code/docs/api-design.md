@@ -80,9 +80,9 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-001 | 健康检查 | HTTP GET `/api/system/health` | MODULE-009 | 返回版本、vault 状态、LLM 配置状态、队列状态 | 待处理 |
-| API-002 | 冷启动探测 | HTTP GET `/api/system/bootstrap` | MODULE-004 | 判定空库（BRANCH-001）、待处理体检数与失败素材数 | 待处理 |
-| API-003 | 打开数据文件夹 | HTTP POST `/api/system/open-folder` | MODULE-004 | 用系统文件管理器打开 vault 目录（G-7 / INTERACTION-017） | 待处理 |
+| API-001 | 健康检查 | HTTP GET `/api/system/health` | MODULE-009 | 返回版本、vault 状态、LLM 配置状态、队列状态 | 已可用 |
+| API-002 | 冷启动探测 | HTTP GET `/api/system/bootstrap` | MODULE-004 | 判定空库（BRANCH-001）、待处理体检数与失败素材数 | 已可用 |
+| API-003 | 打开数据文件夹 | HTTP POST `/api/system/open-folder` | MODULE-004 | 用系统文件管理器打开 vault 目录（G-7 / INTERACTION-017） | 已可用 |
 
 **API-001 响应**
 
@@ -118,16 +118,16 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-004 | 页面列表 | HTTP GET `/api/pages` | MODULE-004 | 按分区/类型筛选的页面列表 | 待处理 |
-| API-005 | 页面详情 | HTTP GET `/api/pages/{name}` | MODULE-004 | 正文、元数据、出链、反链、来源区 | 待处理 |
-| API-006 | 保存人工编辑 | HTTP PUT `/api/pages/{name}` | MODULE-004 | 人工编辑正文，写 `human_edited` 标记（INTERACTION-016） | 待处理 |
-| API-007 | 修改分区 | HTTP PATCH `/api/pages/{name}/zone` | MODULE-004 | 一键改分区（INTERACTION-011 / BRANCH-004） | 待处理 |
-| API-008 | 反向链接 | HTTP GET `/api/pages/{name}/backlinks` | MODULE-003 | 反链面板数据 | 待处理 |
-| API-009 | 页面 diff | HTTP GET `/api/pages/{name}/diff` | MODULE-008 | 单页差异（变更清单展开用） | 待处理 |
-| API-010 | 图谱数据 | HTTP GET `/api/graph` | MODULE-004 | 节点与边，支持分区筛选与 1/2 层深度（UX-TBD-004） | 待处理 |
-| API-011 | 分区列表 | HTTP GET `/api/zones` | MODULE-004 | 分区及其页面数 | 待处理 |
-| API-012 | 分区内页面 | HTTP GET `/api/zones/{name}/pages` | MODULE-004 | 分区浏览（PAGE-007） | 待处理 |
-| API-013 | 全局搜索 | HTTP GET `/api/search` | MODULE-004 | 标题与正文命中，返回片段 | 待处理 |
+| API-004 | 页面列表 | HTTP GET `/api/pages` | MODULE-004 | 按分区/类型筛选的页面列表 | 已可用 |
+| API-005 | 页面详情 | HTTP GET `/api/pages/{name}` | MODULE-004 | 正文、元数据、出链、反链、来源区 | 已可用 |
+| API-006 | 保存人工编辑 | HTTP PUT `/api/pages/{name}` | MODULE-004 | 人工编辑正文，写 `human_edited` 标记（INTERACTION-016） | 已可用 |
+| API-007 | 修改分区 | HTTP PATCH `/api/pages/{name}/zone` | MODULE-004 | 一键改分区（INTERACTION-011 / BRANCH-004） | 已可用 |
+| API-008 | 反向链接 | HTTP GET `/api/pages/{name}/backlinks` | MODULE-003 | 反链面板数据 | 已可用 |
+| API-009 | 页面 diff | HTTP GET `/api/pages/{name}/diff` | MODULE-008 | 单页差异（变更清单展开用） | 已可用 |
+| API-010 | 图谱数据 | HTTP GET `/api/graph` | MODULE-004 | 节点与边，支持分区筛选与 1/2 层深度（UX-TBD-004） | 已可用 |
+| API-011 | 分区列表 | HTTP GET `/api/zones` | MODULE-004 | 分区及其页面数 | 已可用 |
+| API-012 | 分区内页面 | HTTP GET `/api/zones/{name}/pages` | MODULE-004 | 分区浏览（PAGE-007） | 已可用 |
+| API-013 | 全局搜索 | HTTP GET `/api/search` | MODULE-004 | 标题与正文命中，返回片段 | 已可用 |
 
 **API-004 查询参数**：`zone`、`type`、`page`、`size`。响应：
 
@@ -214,16 +214,16 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-014 | 素材列表 | HTTP GET `/api/sources` | MODULE-001 | 素材库总览，按状态筛选（INTERACTION-020） | 待处理 |
-| API-015 | 导入网址 | HTTP POST `/api/sources/url` | MODULE-001 | 粘贴 URL 摄入（INTERACTION-003） | 待处理 |
-| API-016 | 新建笔记 | HTTP POST `/api/sources/note` | MODULE-001 | 手写笔记成素材（INTERACTION-004） | 待处理 |
-| API-017 | 上传文件 | HTTP POST `/api/sources/upload` | MODULE-001 | PDF 等文件上传（INTERACTION-002） | 待处理 |
-| API-018 | 素材详情 | HTTP GET `/api/sources/{id}` | MODULE-001 | 原文页数据（PAGE-010） | 待处理 |
-| API-019 | 编辑素材 | HTTP PATCH `/api/sources/{id}` | MODULE-001 | 笔记可改正文，其余只改元数据（INTERACTION-021） | 待处理 |
-| API-020 | 软删除素材 | HTTP DELETE `/api/sources/{id}` | MODULE-001 | 二次确认后软删除（INTERACTION-018 / ERROR-010） | 待处理 |
-| API-021 | 恢复素材 | HTTP POST `/api/sources/{id}/restore` | MODULE-001 | 从已删除恢复（INTERACTION-022） | 待处理 |
-| API-022 | 重编译素材 | HTTP POST `/api/sources/{id}/recompile` | MODULE-001 | 对该素材重跑 ingest（INTERACTION-019 / BRANCH-006） | 待处理 |
-| API-023 | 打开素材原件 | HTTP GET `/api/sources/{id}/asset` | MODULE-001 | PDF 原件以「打开本地文件」提供（UX-TBD-007） | 待处理 |
+| API-014 | 素材列表 | HTTP GET `/api/sources` | MODULE-001 | 素材库总览，按状态筛选（INTERACTION-020） | 已可用 |
+| API-015 | 导入网址 | HTTP POST `/api/sources/url` | MODULE-001 | 粘贴 URL 摄入（INTERACTION-003） | 已可用 |
+| API-016 | 新建笔记 | HTTP POST `/api/sources/note` | MODULE-001 | 手写笔记成素材（INTERACTION-004） | 已可用 |
+| API-017 | 上传文件 | HTTP POST `/api/sources/upload` | MODULE-001 | PDF 等文件上传（INTERACTION-002） | 已可用 |
+| API-018 | 素材详情 | HTTP GET `/api/sources/{id}` | MODULE-001 | 原文页数据（PAGE-010） | 已可用 |
+| API-019 | 编辑素材 | HTTP PATCH `/api/sources/{id}` | MODULE-001 | 笔记可改正文，其余只改元数据（INTERACTION-021） | 已可用 |
+| API-020 | 软删除素材 | HTTP DELETE `/api/sources/{id}` | MODULE-001 | 二次确认后软删除（INTERACTION-018 / ERROR-010） | 已可用 |
+| API-021 | 恢复素材 | HTTP POST `/api/sources/{id}/restore` | MODULE-001 | 从已删除恢复（INTERACTION-022） | 已可用 |
+| API-022 | 重编译素材 | HTTP POST `/api/sources/{id}/recompile` | MODULE-001 | 对该素材重跑 ingest（INTERACTION-019 / BRANCH-006） | 已可用 |
+| API-023 | 打开素材原件 | HTTP GET `/api/sources/{id}/asset` | MODULE-001 | PDF 原件以「打开本地文件」提供（UX-TBD-007） | 已可用 |
 
 **API-014 查询参数**：`status`（`normal` / `failed` / `deleted` / `stale`，可多值）、`page`、`size`。响应：
 
@@ -305,10 +305,10 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-024 | 触发编译 | HTTP POST `/api/compile` | MODULE-002 | 对指定素材或全部待编译素材发动 ingest | 待处理 |
-| API-025 | 当前任务 | HTTP GET `/api/compile/current` | MODULE-002 | 围观页快照，断线重连后恢复状态（ERROR-007） | 待处理 |
-| API-026 | 任务详情 | HTTP GET `/api/compile/jobs/{job_id}` | MODULE-002 | 已完成任务的历史查询 | 待处理 |
-| API-027 | 变更清单 | HTTP GET `/api/changes` | MODULE-008 | 本次改了哪些页面、新页面、分区结果（PAGE-004） | 待处理 |
+| API-024 | 触发编译 | HTTP POST `/api/compile` | MODULE-002 | 对指定素材或全部待编译素材发动 ingest | 已可用 |
+| API-025 | 当前任务 | HTTP GET `/api/compile/current` | MODULE-002 | 围观页快照，断线重连后恢复状态（ERROR-007） | 已可用 |
+| API-026 | 任务详情 | HTTP GET `/api/compile/jobs/{job_id}` | MODULE-002 | 已完成任务的历史查询 | 已可用 |
+| API-027 | 变更清单 | HTTP GET `/api/changes` | MODULE-008 | 本次改了哪些页面、新页面、分区结果（PAGE-004） | 已可用 |
 
 **API-024 请求**：`{ "source_ids": ["a1b2c3…"], "all_pending": false }`。二者必选其一。响应 `{ "job_id": "job-20260915-1403", "queued_sources": 3 }`。
 
@@ -366,11 +366,11 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-028 | 提问 | HTTP POST `/api/ask` | MODULE-005 | 跨页综合作答，带可跳转引用 | 待处理 |
-| API-029 | 答案存为页面 | HTTP POST `/api/ask/{id}/save-as-page` | MODULE-005 | 回填成 wiki 页面（INTERACTION-008 / BRANCH-003） | 待处理 |
-| API-030 | 问答历史 | HTTP GET `/api/queries` | MODULE-005 | 历史列表（PAGE-009） | 待处理 |
-| API-031 | 问答详情 | HTTP GET `/api/queries/{id}` | MODULE-005 | 回放单条 | 待处理 |
-| API-032 | 删除问答 | HTTP DELETE `/api/queries/{id}` | MODULE-005 | 删除单条（UX-TBD-009） | 待处理 |
+| API-028 | 提问 | HTTP POST `/api/ask` | MODULE-005 | 跨页综合作答，带可跳转引用 | 已可用 |
+| API-029 | 答案存为页面 | HTTP POST `/api/ask/{id}/save-as-page` | MODULE-005 | 回填成 wiki 页面（INTERACTION-008 / BRANCH-003） | 已可用 |
+| API-030 | 问答历史 | HTTP GET `/api/queries` | MODULE-005 | 历史列表（PAGE-009） | 已可用 |
+| API-031 | 问答详情 | HTTP GET `/api/queries/{id}` | MODULE-005 | 回放单条 | 已可用 |
+| API-032 | 删除问答 | HTTP DELETE `/api/queries/{id}` | MODULE-005 | 删除单条（UX-TBD-009） | 已可用 |
 
 **API-028 请求**：`{ "question": "……" }`（长度 1~500）。响应：
 
@@ -423,10 +423,10 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-033 | 体检报告 | HTTP GET `/api/lint/report` | MODULE-006 | 五类分组 + 已忽略项 | 待处理 |
-| API-034 | 手动体检 | HTTP POST `/api/lint/run` | MODULE-006 | 手动触发一次扫描（TASK-TBD-001） | 待处理 |
-| API-035 | 修复体检项 | HTTP POST `/api/lint/fix` | MODULE-006 | 勾选后逐条修复（INTERACTION-013） | 待处理 |
-| API-036 | 忽略体检项 | HTTP POST `/api/lint/ignore` | MODULE-006 | 忽略并填写原因（INTERACTION-023） | 待处理 |
+| API-033 | 体检报告 | HTTP GET `/api/lint/report` | MODULE-006 | 五类分组 + 已忽略项 | 已可用 |
+| API-034 | 手动体检 | HTTP POST `/api/lint/run` | MODULE-006 | 手动触发一次扫描（TASK-TBD-001） | 已可用 |
+| API-035 | 修复体检项 | HTTP POST `/api/lint/fix` | MODULE-006 | 勾选后逐条修复（INTERACTION-013） | 已可用 |
+| API-036 | 忽略体检项 | HTTP POST `/api/lint/ignore` | MODULE-006 | 忽略并填写原因（INTERACTION-023） | 已可用 |
 
 **API-033 响应**：
 
@@ -481,12 +481,12 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-037 | 读取设置 | HTTP GET `/api/settings` | MODULE-009 | 模型、vault、限额、主题 | 待处理 |
-| API-038 | 保存设置 | HTTP PUT `/api/settings` | MODULE-009 | 不含 API key | 待处理 |
-| API-039 | 保存 API key | HTTP PUT `/api/settings/api-key` | MODULE-009 | 单独写入仓库外密钥文件 | 待处理 |
-| API-040 | 测试连接 | HTTP POST `/api/settings/test-connection` | MODULE-009 | 验证 key 与模型可用（ERROR-008 的预防） | 待处理 |
-| API-041 | git 手动同步 | HTTP POST `/api/settings/git/sync` | MODULE-008 | 推送到远端（ADR-009） | 待处理 |
-| API-042 | 成本看板 | HTTP GET `/api/costs` | MODULE-009 | 累计、按日、按操作（PAGE-012） | 待处理 |
+| API-037 | 读取设置 | HTTP GET `/api/settings` | MODULE-009 | 模型、vault、限额、主题 | 已可用 |
+| API-038 | 保存设置 | HTTP PUT `/api/settings` | MODULE-009 | 不含 API key | 已可用 |
+| API-039 | 保存 API key | HTTP PUT `/api/settings/api-key` | MODULE-009 | 单独写入仓库外密钥文件 | 已可用 |
+| API-040 | 测试连接 | HTTP POST `/api/settings/test-connection` | MODULE-009 | 验证 key 与模型可用（ERROR-008 的预防） | 已可用 |
+| API-041 | git 手动同步 | HTTP POST `/api/settings/git/sync` | MODULE-008 | 推送到远端（ADR-009） | 已可用 |
+| API-042 | 成本看板 | HTTP GET `/api/costs` | MODULE-009 | 累计、按日、按操作（PAGE-012） | 已可用 |
 
 **API-037 响应**
 
@@ -538,7 +538,7 @@
 
 | 接口编号 | 名称 | 形态 | 对应模块 | 用途 | 状态 |
 |---|---|---|---|---|---|
-| API-043 | 事件流 | HTTP GET `/api/events` (SSE) | 公共 | 编译进度、素材状态、体检完成、待处理数变化 | 待处理 |
+| API-043 | 事件流 | HTTP GET `/api/events` (SSE) | 公共 | 编译进度、素材状态、体检完成、待处理数变化 | 已可用 |
 
 详见第 5 节。
 

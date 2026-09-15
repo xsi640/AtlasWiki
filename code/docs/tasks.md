@@ -65,19 +65,19 @@ Wave 0 完成后，以 Wave 1 的最小切片构成闭环：
 
 | 任务编号 | 任务名称 | 模块 | 依赖项 | 验收标准 | 状态 |
 |---|---|---|---|---|---|
-| TASK-008 | 网页素材解析与导入 | MODULE-001 | TASK-003, TASK-007 | 粘贴 URL 能抓取并抽出正文（含标题、作者、发布时间）；正文抽取失败的站点返回 `E_PARSE_FAILED` 且不产生半成品文件；抓取超时可控；非 2xx 响应有明确错误；同一 URL 重复导入返回 `E_DUPLICATE_SOURCE` 且 `details.existing` 正确 | 待处理 |
-| TASK-009 | PDF 素材解析与导入 | MODULE-001 | TASK-003, TASK-007 | 上传 PDF 能抽出文本并落 `raw/assets/`；文本可抽取的 PDF 正文完整；加密或损坏 PDF 返回 `E_PARSE_FAILED` 且原件保留；扫描版（无文本层）给出明确失败原因而非空正文 | 待处理 |
-| TASK-010 | 手写笔记与素材元数据 | MODULE-001 | TASK-003, TASK-007 | 新建笔记能落盘并成为独立素材；编辑标题/标签/备注/metadata 后状态置 `stale` 且响应 `needs_recompile: true`；`web`/`pdf` 传 `content` 返回 `E_SOURCE_NOT_EDITABLE`；`note` 类正文可改且 `content_editable = true`；素材索引 `sources-index.json` 与磁盘一致（新增、改名、删除后均一致） | 待处理 |
-| TASK-011 | 素材生命周期：软删除、恢复、重编译 | MODULE-001 | TASK-010, TASK-004 | 软删除只改状态、文件保留、返回受影响页面数与列表；删除后 `GET /api/sources?status=deleted` 能查到、`normal` 查不到；恢复后状态回 `normal`；重编译走同一队列并复用既有派生页面（不新建重复页）；编译中的素材被编辑或删除返回 `E_SOURCE_BUSY` | 待处理 |
-| TASK-012 | 素材 API 接口层 | MODULE-001 | TASK-008, TASK-009, TASK-010, TASK-011 | API-014 ~ API-023 全部可用；`status` 多值筛选与 `counts` 统计正确；分页参数生效且 `size` 上限 200；错误码与 api-design 第 4 节逐条一致；上传大小超限有明确错误 | 待处理 |
-| TASK-013 | 编译引擎：读取与生成 | MODULE-002 | TASK-003, TASK-006, TASK-007 | 编译一份素材能产出摘要页，并新建或更新受影响的概念页/实体页；页面互链形成且 `links` 字段与正文中的 `[[链接]]` 一致；`index.md` 随编译更新；LLM 返回非法结构时不写坏文件（校验后再落盘）；编译过程每一步都通过队列发进度事件 | 待处理 |
-| TASK-014 | 编译引擎：增量分区与矛盾标记 | MODULE-002 | TASK-013 | 分区判定只作用于本次受影响页面（断言未受影响页面的 `zone` 未被改写）；`zone` 写入 frontmatter 并记入 log；分区变更在变更清单中为 `zone_changed` 且保留 `zone_before`；发现的新旧矛盾被记录供体检消费；`human_edited` 页面的 `zone` 不由编译过程擅自改写 | 待处理 |
-| TASK-015 | 长文分段与成本上限 | MODULE-002 | TASK-013 | 超过 `segment_threshold_chars` 的素材走分段摘要再合成，围观页 `steps` 显示分段进度；单任务成本超过 `max_cost_per_job` 时停止并置任务 `failed` 且原因明确；未超阈值的长文不走分段（断言调用次数不增加） | 待处理 |
-| TASK-016 | 编译与变更清单 API | MODULE-002, MODULE-008 | TASK-012, TASK-013, TASK-015 | API-024 ~ API-027 可用；`GET /api/compile/current` 在无任务时返回 `status: idle`；断线重连后快照与实际进度一致（ERROR-007）；变更清单区分 `created`/`updated`/`zone_changed` 且 `has_diff` 正确；部分素材失败时 `failed_sources` 有内容且已产出页面保留 | 待处理 |
-| TASK-017 | 前端 PAGE-002 素材投放页 | MODULE-004 | TASK-002, TASK-012 | 三种入口同屏并列并都能成功提交；空库时首页落到本页（BRANCH-001 / STATE-006）；导入失败就地显示 STATE-010 与重试/移除；重复素材提示 ERROR-003 并给「重新编译」；主操作行在任意滚动位置可见；1440×900 下与 UI-009 布局一致 | 待处理 |
-| TASK-018 | 前端 PAGE-003 编译围观页 | MODULE-004 | TASK-002, TASK-004, TASK-016 | 通过 SSE 实时更新当前素材、当前页面、已完成数与步骤状态；显示累计花费（不显示 token）；显示「可离开」并在离开后顶部保留进度胶囊（BRANCH-002）；完成后跳转变更清单；断线后重连能恢复到正确进度 | 待处理 |
-| TASK-019 | 前端 PAGE-004 变更清单页 | MODULE-004 | TASK-002, TASK-016 | 展示本次改动页面、新页面入口、自动分区结果；可逐页展开 diff（INTERACTION-012）；可一键改分区并立即反映到结果（INTERACTION-011 / BRANCH-004）；失败素材单独分区展示并可重试 | 待处理 |
-| TASK-020 | 前端 PAGE-010 / PAGE-013 素材管理页 | MODULE-004 | TASK-002, TASK-012 | 素材库支持四态筛选且各态数量正确（INTERACTION-020）；`web`/`pdf` 的编辑按钮为「编辑元数据」且正文区不可编辑；`note` 可改正文；保存后提示「需重编译」并给立即重编译入口（CONTENT-007）；软删除二次确认展示受影响页面数（ERROR-010）；已删除可恢复；原文页展示派生页面并可跳转 | 待处理 |
+| TASK-008 | 网页素材解析与导入 | MODULE-001 | TASK-003, TASK-007 | 粘贴 URL 能抓取并抽出正文（含标题、作者、发布时间）；正文抽取失败的站点返回 `E_PARSE_FAILED` 且不产生半成品文件；抓取超时可控；非 2xx 响应有明确错误；同一 URL 重复导入返回 `E_DUPLICATE_SOURCE` 且 `details.existing` 正确 | 已完成 |
+| TASK-009 | PDF 素材解析与导入 | MODULE-001 | TASK-003, TASK-007 | 上传 PDF 能抽出文本并落 `raw/assets/`；文本可抽取的 PDF 正文完整；加密或损坏 PDF 返回 `E_PARSE_FAILED` 且原件保留；扫描版（无文本层）给出明确失败原因而非空正文 | 已完成 |
+| TASK-010 | 手写笔记与素材元数据 | MODULE-001 | TASK-003, TASK-007 | 新建笔记能落盘并成为独立素材；编辑标题/标签/备注/metadata 后状态置 `stale` 且响应 `needs_recompile: true`；`web`/`pdf` 传 `content` 返回 `E_SOURCE_NOT_EDITABLE`；`note` 类正文可改且 `content_editable = true`；素材索引 `sources-index.json` 与磁盘一致（新增、改名、删除后均一致） | 已完成 |
+| TASK-011 | 素材生命周期：软删除、恢复、重编译 | MODULE-001 | TASK-010, TASK-004 | 软删除只改状态、文件保留、返回受影响页面数与列表；删除后 `GET /api/sources?status=deleted` 能查到、`normal` 查不到；恢复后状态回 `normal`；重编译走同一队列并复用既有派生页面（不新建重复页）；编译中的素材被编辑或删除返回 `E_SOURCE_BUSY` | 已完成 |
+| TASK-012 | 素材 API 接口层 | MODULE-001 | TASK-008, TASK-009, TASK-010, TASK-011 | API-014 ~ API-023 全部可用；`status` 多值筛选与 `counts` 统计正确；分页参数生效且 `size` 上限 200；错误码与 api-design 第 4 节逐条一致；上传大小超限有明确错误 | 已完成 |
+| TASK-013 | 编译引擎：读取与生成 | MODULE-002 | TASK-003, TASK-006, TASK-007 | 编译一份素材能产出摘要页，并新建或更新受影响的概念页/实体页；页面互链形成且 `links` 字段与正文中的 `[[链接]]` 一致；`index.md` 随编译更新；LLM 返回非法结构时不写坏文件（校验后再落盘）；编译过程每一步都通过队列发进度事件 | 已完成 |
+| TASK-014 | 编译引擎：增量分区与矛盾标记 | MODULE-002 | TASK-013 | 分区判定只作用于本次受影响页面（断言未受影响页面的 `zone` 未被改写）；`zone` 写入 frontmatter 并记入 log；分区变更在变更清单中为 `zone_changed` 且保留 `zone_before`；发现的新旧矛盾被记录供体检消费；`human_edited` 页面的 `zone` 不由编译过程擅自改写 | 已完成 |
+| TASK-015 | 长文分段与成本上限 | MODULE-002 | TASK-013 | 超过 `segment_threshold_chars` 的素材走分段摘要再合成，围观页 `steps` 显示分段进度；单任务成本超过 `max_cost_per_job` 时停止并置任务 `failed` 且原因明确；未超阈值的长文不走分段（断言调用次数不增加） | 已完成 |
+| TASK-016 | 编译与变更清单 API | MODULE-002, MODULE-008 | TASK-012, TASK-013, TASK-015 | API-024 ~ API-027 可用；`GET /api/compile/current` 在无任务时返回 `status: idle`；断线重连后快照与实际进度一致（ERROR-007）；变更清单区分 `created`/`updated`/`zone_changed` 且 `has_diff` 正确；部分素材失败时 `failed_sources` 有内容且已产出页面保留 | 已完成 |
+| TASK-017 | 前端 PAGE-002 素材投放页 | MODULE-004 | TASK-002, TASK-012 | 三种入口同屏并列并都能成功提交；空库时首页落到本页（BRANCH-001 / STATE-006）；导入失败就地显示 STATE-010 与重试/移除；重复素材提示 ERROR-003 并给「重新编译」；主操作行在任意滚动位置可见；1440×900 下与 UI-009 布局一致 | 待验证 |
+| TASK-018 | 前端 PAGE-003 编译围观页 | MODULE-004 | TASK-002, TASK-004, TASK-016 | 通过 SSE 实时更新当前素材、当前页面、已完成数与步骤状态；显示累计花费（不显示 token）；显示「可离开」并在离开后顶部保留进度胶囊（BRANCH-002）；完成后跳转变更清单；断线后重连能恢复到正确进度 | 待验证 |
+| TASK-019 | 前端 PAGE-004 变更清单页 | MODULE-004 | TASK-002, TASK-016 | 展示本次改动页面、新页面入口、自动分区结果；可逐页展开 diff（INTERACTION-012）；可一键改分区并立即反映到结果（INTERACTION-011 / BRANCH-004）；失败素材单独分区展示并可重试 | 待验证 |
+| TASK-020 | 前端 PAGE-010 / PAGE-013 素材管理页 | MODULE-004 | TASK-002, TASK-012 | 素材库支持四态筛选且各态数量正确（INTERACTION-020）；`web`/`pdf` 的编辑按钮为「编辑元数据」且正文区不可编辑；`note` 可改正文；保存后提示「需重编译」并给立即重编译入口（CONTENT-007）；软删除二次确认展示受影响页面数（ERROR-010）；已删除可恢复；原文页展示派生页面并可跳转 | 待验证 |
 
 ### Wave 2 · 浏览与图谱
 
@@ -112,8 +112,8 @@ Wave 0 完成后，以 Wave 1 的最小切片构成闭环：
 | TASK-032 | 设置、成本与系统 API | MODULE-009, MODULE-008 | TASK-005, TASK-006 | API-001 ~ API-003、API-037 ~ API-042 可用；API key 只回显末 4 位、永不返回完整值；`test-connection` 能区分鉴权失败与超时；成本看板按日/按操作统计与 `costs.json` 一致；`pricing_source` 正确反映内置或自定义；打开数据文件夹能实际唤起系统文件管理器 | 已完成 |
 | TASK-033 | 前端 PAGE-012 设置页 | MODULE-004 | TASK-002, TASK-032 | provider / base_url / 模型 / key / 限额可配置并保存生效；成本看板展示累计、按日、按操作；「打开数据文件夹」为页内主按钮（G-7 / UX-AC-008）；git 远端、分支、SSH key 可配置并可手动同步；同步失败展示 git 输出；深浅主题可切换且浅色为默认（UI-TBD-003） | 已完成 |
 | TASK-034 | 启动脚本与部署说明 | 公共 | TASK-001, TASK-002 | `code/scripts/start.ps1` 能检查 `dist` 缺失并给出提示、启动服务、打印实际地址；端口占用时自动顺延并打印新端口；`code/deploy/` 含环境要求、启动方式、故障排查；在干净环境下按文档操作能成功启动 | 已完成 |
-| TASK-035 | 端到端验证脚本 | 公共 | TASK-016, TASK-023, TASK-028, TASK-031, TASK-033 | 脚本可独立完成：建临时 vault → 启动服务 → 导入三类素材之一 → 编译 → 断言 wiki 出现页面与索引 → 提问并断言引用页真实存在 → 跑体检并断言五类检查可执行 → 关闭服务 → 清理；失败时打印服务端日志尾部；退出码非 0 表示失败；重复执行不残留状态（幂等） | 待处理 |
-| TASK-036 | 忽略规则、文档回填与收尾 | 公共 | TASK-035 | `.gitignore` 覆盖 `.venv`/`node_modules`/`dist`/`.llmwiki` 的运行期垃圾但不忽略知识内容；仓库内无 API key；`implementation-record.md` 记录实现过程与集成阶段缺陷；`tasks.md` 状态全部回填；无临时文件残留 | 待处理 |
+| TASK-035 | 端到端验证脚本 | 公共 | TASK-016, TASK-023, TASK-028, TASK-031, TASK-033 | 脚本可独立完成：建临时 vault → 启动服务 → 导入三类素材之一 → 编译 → 断言 wiki 出现页面与索引 → 提问并断言引用页真实存在 → 跑体检并断言五类检查可执行 → 关闭服务 → 清理；失败时打印服务端日志尾部；退出码非 0 表示失败；重复执行不残留状态（幂等） | 已完成 |
+| TASK-036 | 忽略规则、文档回填与收尾 | 公共 | TASK-035 | `.gitignore` 覆盖 `.venv`/`node_modules`/`dist`/`.llmwiki` 的运行期垃圾但不忽略知识内容；仓库内无 API key；`implementation-record.md` 记录实现过程与集成阶段缺陷；`tasks.md` 状态全部回填；无临时文件残留 | 已完成 |
 
 **任务统计**：36 个任务，覆盖 9 个模块 + 公共基础设施。
 
@@ -151,20 +151,21 @@ TASK-001 → TASK-003 → TASK-007 → TASK-013 → TASK-016 → TASK-018 → TA
 
 ### 3.3 阻塞说明
 
-当前无阻塞任务。
+当前无阻塞任务。TASK-035 / TASK-036 已随收尾完成；TASK-017 ~ TASK-020 的
+浏览器侧验收转入阶段 4（testing），不构成实现阻塞。
 
 ---
 
 ## 4. 任务进度状态汇总
 
+> 2026-09-16 回填：全部 36 个任务实现完毕。其中 4 个前端页任务（TASK-017 ~ 020）
+> 的代码已与后端 API 联调（端到端脚本覆盖同一链路），但验收标准中的视觉/布局项
+> （1440×900 布局一致性、断线重连体验等）留待阶段 4 逐项验收，故标记「待验证」。
+
 | 状态 | 数量 | 任务 |
 |---|---|---|
-| 已完成 | 7 | TASK-001 ~ TASK-007（Wave 0 公共地基） |
-| 进行中 | 9 | TASK-008 ~ TASK-011、TASK-013（G2/G3 并行中） |
-| 待处理 | 20 | TASK-012、TASK-014 ~ TASK-036 |
-
-| 待验证 | 0 | — |
-| 已完成 | 0 | — |
+| 已完成 | 32 | TASK-001 ~ TASK-016、TASK-021 ~ TASK-036（其中 TASK-036 随本次收尾完成） |
+| 待验证 | 4 | TASK-017 ~ TASK-020（前端 Wave 1 四页，待阶段 4 浏览器验收） |
 | 已阻塞 | 0 | — |
 
 **按模块统计**
@@ -218,4 +219,6 @@ TASK-001 → TASK-003 → TASK-007 → TASK-013 → TASK-016 → TASK-018 → TA
 - 未修改已确认的 UX/UI 流程与页面职责
 - 未改动已确认的架构（`tech-architecture.md` 无未处理的 `ARCH-TBD-###`）
 
-**阶段完成判断：⏳ 阶段 3B 文档部分完成。** `tasks.md` 与 `api-design.md` 已生成，任务将按波次推进并持续回填状态；全部任务完成后本文件作为阶段 4 的输入定稿。
+**阶段完成判断：✅ 阶段 3B 实现完成。** 36 个任务全部实现并通过单元/接口级测试
+（后端 117 项测试 + 端到端脚本 `code/scripts/e2e.sh`）；TASK-017 ~ 020 的视觉验收项
+转入阶段 4 执行。本文件作为阶段 4 的输入定稿。
