@@ -59,6 +59,19 @@ pwsh -File code/scripts/start.ps1
 | 应用设置 | `%APPDATA%/llmwiki/settings.json`（Win）或 `~/Library/Application Support/llmwiki/`（macOS） | vault 路径 / LLM / git |
 | 知识库 | `vault_path` 指定的目录 | 独立 git 仓库，markdown 文件 |
 
+设置环境变量 `LLMWIKI_CONFIG_DIR` 可把应用配置指到任意目录（测试与端到端脚本使用，
+普通部署不需要）。
+
+## 端到端验证
+
+```bash
+bash code/scripts/e2e.sh
+```
+
+脚本在临时目录建 vault 与隔离配置，用内置的 mock LLM（`e2e_mock_llm.py`，无外部
+网络依赖）跑通「导入笔记 → 编译 → 变更清单 → 问答 → 体检」全链路；失败时打印
+服务端日志尾部并以非 0 退出；可重复执行，不残留状态。
+
 ## 数据安全
 
 - API key 不进版本库（存放在仓库外）
