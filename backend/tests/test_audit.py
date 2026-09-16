@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from llmwiki.audit import AuditLogger, AuditService, GitOperations, unified_content_diff
-from llmwiki.errors import AppError, ErrorCode
+from atlaswiki.audit import AuditLogger, AuditService, GitOperations, unified_content_diff
+from atlaswiki.errors import AppError, ErrorCode
 
 
 def write_page(vault: Path, name: str, content: str) -> Path:

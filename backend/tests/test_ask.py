@@ -10,13 +10,13 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from llmwiki.api import ask as ask_api
-from llmwiki.ask import AskEngine
-from llmwiki.config import ConfigStore, LlmSettings, Settings
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.jobs import Job, JobQueue
-from llmwiki.main import app
-from llmwiki.workspace.store import PageDraft, WikiStore
+from atlaswiki.api import ask as ask_api
+from atlaswiki.ask import AskEngine
+from atlaswiki.config import ConfigStore, LlmSettings, Settings
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.jobs import Job, JobQueue
+from atlaswiki.main import app
+from atlaswiki.workspace.store import PageDraft, WikiStore
 
 
 @dataclass

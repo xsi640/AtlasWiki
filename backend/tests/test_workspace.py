@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-import llmwiki.workspace.store as store_module
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.workspace import (
+import atlaswiki.workspace.store as store_module
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.workspace import (
     VAULT_DIRECTORIES,
     PageDraft,
     WikiStore,

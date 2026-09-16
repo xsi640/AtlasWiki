@@ -8,11 +8,11 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from llmwiki.api import pages
-from llmwiki.config import ConfigStore, Settings
-from llmwiki.main import app
-from llmwiki.schema import PageType
-from llmwiki.workspace.store import PageDraft, WikiStore
+from atlaswiki.api import pages
+from atlaswiki.config import ConfigStore, Settings
+from atlaswiki.main import app
+from atlaswiki.schema import PageType
+from atlaswiki.workspace.store import PageDraft, WikiStore
 
 
 @pytest.fixture

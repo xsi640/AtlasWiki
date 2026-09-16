@@ -8,10 +8,10 @@ import pytest
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
-from llmwiki.config import Settings, config_store
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.ingest.pdf import import_pdf
-from llmwiki.schema import MaterialKind, MaterialStatus
+from atlaswiki.config import Settings, config_store
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.ingest.pdf import import_pdf
+from atlaswiki.schema import MaterialKind, MaterialStatus
 
 
 def _text_stream(text: str) -> DecodedStreamObject:

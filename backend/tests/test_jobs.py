@@ -11,9 +11,9 @@ from typing import Any
 
 import pytest
 
-from llmwiki.api import events as events_api
-from llmwiki.config import Settings
-from llmwiki.jobs import Job, JobQueue, JobStatus
+from atlaswiki.api import events as events_api
+from atlaswiki.config import Settings
+from atlaswiki.jobs import Job, JobQueue, JobStatus
 
 
 class FakeConfigStore:

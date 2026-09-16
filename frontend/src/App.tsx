@@ -21,7 +21,7 @@ export function App() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <span className="app-title">LLM Wiki</span>
+        <span className="app-title">AtlasWiki</span>
         <nav className="app-nav" aria-label="主导航">
           {NAV_ITEMS.map((item) => (
             <NavLink

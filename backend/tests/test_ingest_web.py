@@ -6,18 +6,18 @@ from pathlib import Path
 
 import pytest
 
-from llmwiki.config import Settings, config_store
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.ingest.web import fetch_web
-from llmwiki.schema import MaterialKind, MaterialStatus
+from atlaswiki.config import Settings, config_store
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.ingest.web import fetch_web
+from atlaswiki.schema import MaterialKind, MaterialStatus
 
 _SAMPLE_HTML = """\
 <html>
-<head><title>Understanding LLM Wiki</title></head>
+<head><title>Understanding AtlasWiki</title></head>
 <body>
 <article>
-<h1>Understanding LLM Wiki</h1>
-<p>LLM Wiki is a new approach to knowledge management that compiles raw material into interconnected markdown pages at ingest time, unlike traditional RAG which retrieves at query time.</p>
+<h1>Understanding AtlasWiki</h1>
+<p>AtlasWiki is a new approach to knowledge management that compiles raw material into interconnected markdown pages at ingest time, unlike traditional RAG which retrieves at query time.</p>
 <p>This approach allows knowledge to compound over time as the wiki grows.</p>
 </article>
 </body>

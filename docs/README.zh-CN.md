@@ -1,8 +1,8 @@
-# LLM Wiki
+# AtlasWiki
 
 [English](../README.md)
 
-LLM Wiki 是一个本地优先的知识库编译器。它将网页、PDF 和手写笔记转化为结构化 Markdown Wiki，并提供问答、知识图谱、变更审阅、来源管理和知识质量体检能力。
+AtlasWiki 是一个本地优先的知识库编译器。它将网页、PDF 和手写笔记转化为结构化 Markdown Wiki，并提供问答、知识图谱、变更审阅、来源管理和知识质量体检能力。
 
 数据与 API Key 默认保留在本机：知识库是一个独立的 Markdown + Git 仓库，适合个人研究、团队知识沉淀与可追溯的 AI 辅助写作。
 
@@ -71,8 +71,8 @@ pwsh -File scripts/start.ps1
 
 ## 配置与数据
 
-- 应用设置：Windows 为 `%APPDATA%/llmwiki/settings.json`；macOS 为 `~/Library/Application Support/llmwiki/`。
-- 使用 `LLMWIKI_CONFIG_DIR` 可覆盖配置目录，适合测试或隔离环境。
+- 应用设置：Windows 为 `%APPDATA%/atlaswiki/settings.json`；macOS 为 `~/Library/Application Support/atlaswiki/`。
+- 使用 `ATLASWIKI_CONFIG_DIR` 可覆盖配置目录，适合测试或隔离环境；旧版 LLM Wiki 配置会被自动识别，保证升级兼容。
 - API Key 不写入项目文件，也不应提交到版本控制。
 - Vault 是独立 Git 仓库；可在设置中启用自动提交和配置远端同步。
 

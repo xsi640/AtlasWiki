@@ -10,9 +10,9 @@ from typing import Any
 import httpx
 import pytest
 
-from llmwiki.config import LlmSettings, Settings, config_store
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.llm import (
+from atlaswiki.config import LlmSettings, Settings, config_store
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.llm import (
     clear_custom_pricing,
     close_client,
     complete,
@@ -20,7 +20,7 @@ from llmwiki.llm import (
     get_costs,
     stream,
 )
-from llmwiki.llm import client as llm_client
+from atlaswiki.llm import client as llm_client
 
 
 def install_settings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, *, api_key: str = "test-key") -> Settings:
@@ -204,7 +204,7 @@ async def test_custom_pricing_is_used(llm_mock, tmp_path: Path) -> None:
             },
         )
     )
-    from llmwiki.llm import pricing_for, save_custom_pricing, set_model_pricing
+    from atlaswiki.llm import pricing_for, save_custom_pricing, set_model_pricing
 
     set_model_pricing("custom-model", 1, 2)
     save_custom_pricing()

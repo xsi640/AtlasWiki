@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# LLM Wiki 启动脚本（macOS / Linux）
+# AtlasWiki 启动脚本（macOS / Linux）
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -15,6 +15,6 @@ if [ ! -f "$FRONTEND_DIST/index.html" ]; then
   exit 1
 fi
 
-echo "🚀 启动 LLM Wiki..."
+echo "🚀 启动 AtlasWiki..."
 cd "$BACKEND_DIR"
-exec uv run llmwiki
+exec uv run atlaswiki

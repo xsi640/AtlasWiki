@@ -12,13 +12,13 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from llmwiki.api import compile as compile_api
-from llmwiki.compile import CompileEngine
-from llmwiki.config import LlmSettings, Settings, config_store
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.jobs import Job, JobQueue
-from llmwiki.main import app
-from llmwiki.workspace.store import WikiStore
+from atlaswiki.api import compile as compile_api
+from atlaswiki.compile import CompileEngine
+from atlaswiki.config import LlmSettings, Settings, config_store
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.jobs import Job, JobQueue
+from atlaswiki.main import app
+from atlaswiki.workspace.store import WikiStore
 
 
 @dataclass

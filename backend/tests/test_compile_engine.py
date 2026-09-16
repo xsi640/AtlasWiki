@@ -9,14 +9,14 @@ from typing import Any
 
 import pytest
 
-from llmwiki.compile import CompileEngine
-from llmwiki.compile.engine import _CompileManifest
-from llmwiki.config import ConfigStore, LlmSettings, Settings
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.jobs import Job, JobQueue
-from llmwiki.schema import INGEST_PROMPT
-from llmwiki.workspace.store import PageDraft
-from llmwiki.workspace.store import WikiStore as MarkdownStore
+from atlaswiki.compile import CompileEngine
+from atlaswiki.compile.engine import _CompileManifest
+from atlaswiki.config import ConfigStore, LlmSettings, Settings
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.jobs import Job, JobQueue
+from atlaswiki.schema import INGEST_PROMPT
+from atlaswiki.workspace.store import PageDraft
+from atlaswiki.workspace.store import WikiStore as MarkdownStore
 
 
 @dataclass
@@ -229,10 +229,10 @@ async def test_invalid_llm_json_writes_no_wiki_page(tmp_path: Path) -> None:
 
 def test_manifest_serializes_runtime_changes(tmp_path: Path) -> None:
     """变更清单载体应能序列化页面路径和动作。"""
-    from llmwiki.schema import PageType
+    from atlaswiki.schema import PageType
 
     manifest = _CompileManifest(job_id="job-1")
-    from llmwiki.compile.engine import CompileChange
+    from atlaswiki.compile.engine import CompileChange
 
     manifest.items.append(
         CompileChange(

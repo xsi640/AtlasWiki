@@ -42,7 +42,7 @@ export function HomePage() {
     return (
       <div className="page">
         <header className="page-header">
-          <h1>LLM Wiki</h1>
+          <h1>AtlasWiki</h1>
           <p className="page-subtitle">先导入素材，让知识开始生长。</p>
         </header>
         <div className="empty-state">
@@ -65,7 +65,7 @@ export function HomePage() {
       )}
 
       <header className="page-header">
-        <h1>LLM Wiki</h1>
+        <h1>AtlasWiki</h1>
         <p className="page-subtitle">对着知识库提问，跨页面综合作答。</p>
       </header>
 

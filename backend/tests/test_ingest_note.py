@@ -8,8 +8,8 @@ from typing import Any
 import frontmatter
 import pytest
 
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.ingest.note import import_note
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.ingest.note import import_note
 
 
 class _StubConfigStore:
@@ -29,7 +29,7 @@ class _StubConfigStore:
 def vault(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """把冻结配置指向临时 vault。"""
 
-    import llmwiki.workspace.store as store_module
+    import atlaswiki.workspace.store as store_module
 
     path = tmp_path / "vault"
     monkeypatch.setattr(store_module, "config_store", _StubConfigStore(path))

@@ -12,11 +12,11 @@ from fastapi.testclient import TestClient
 from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
-from llmwiki.api import sources as sources_api
-from llmwiki.config import LlmSettings, Settings, config_store
-from llmwiki.jobs import JobQueue
-from llmwiki.main import app
-from llmwiki.workspace.store import WikiStore
+from atlaswiki.api import sources as sources_api
+from atlaswiki.config import LlmSettings, Settings, config_store
+from atlaswiki.jobs import JobQueue
+from atlaswiki.main import app
+from atlaswiki.workspace.store import WikiStore
 
 
 @dataclass

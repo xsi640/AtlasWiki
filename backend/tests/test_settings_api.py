@@ -13,9 +13,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
 
-from llmwiki.api.system import router as system_router
-from llmwiki.config import Settings, config_store
-from llmwiki.errors import AppError, ErrorCode
+from atlaswiki.api.system import router as system_router
+from atlaswiki.config import Settings, config_store
+from atlaswiki.errors import AppError, ErrorCode
 
 
 class FakeAsyncClient:
@@ -68,7 +68,7 @@ def client() -> TestClient:
     async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
         return JSONResponse(status_code=exc.status_code, content=exc.to_payload())
 
-    from llmwiki.api.settings import root_router, router
+    from atlaswiki.api.settings import root_router, router
 
     app.include_router(router)
     app.include_router(root_router)
@@ -199,7 +199,7 @@ def test_connection_maps_http_statuses(
         status_code,
         request=httpx.Request("POST", "https://llm.example/v1/chat/completions"),
     )
-    monkeypatch.setattr("llmwiki.api.settings.httpx.AsyncClient", FakeAsyncClient)
+    monkeypatch.setattr("atlaswiki.api.settings.httpx.AsyncClient", FakeAsyncClient)
 
     with client() as test_client:
         response = test_client.post("/api/settings/test-connection")
@@ -217,7 +217,7 @@ def test_connection_distinguishes_timeout(
     install_settings(tmp_path, monkeypatch)
     FakeAsyncClient.fake_response = None
     FakeAsyncClient.fake_exception = httpx.TimeoutException("timed out")
-    monkeypatch.setattr("llmwiki.api.settings.httpx.AsyncClient", FakeAsyncClient)
+    monkeypatch.setattr("atlaswiki.api.settings.httpx.AsyncClient", FakeAsyncClient)
 
     with client() as test_client:
         response = test_client.post("/api/settings/test-connection")
@@ -255,7 +255,7 @@ def test_git_sync_uses_audit_operations(
             calls.append((vault_path, remote_name))
             return type("Result", (), {"stdout": "pushed\n", "stderr": ""})()
 
-    monkeypatch.setattr("llmwiki.audit.GitOperations", FakeGitOperations)
+    monkeypatch.setattr("atlaswiki.audit.GitOperations", FakeGitOperations)
     with client() as test_client:
         response = test_client.post("/api/settings/git/sync")
 
@@ -295,7 +295,7 @@ def test_open_data_folder_launches_system_file_manager(
         return object()
 
     monkeypatch.setattr(sys, "platform", "darwin")
-    monkeypatch.setattr("llmwiki.api.system.subprocess.Popen", fake_popen)
+    monkeypatch.setattr("atlaswiki.api.system.subprocess.Popen", fake_popen)
 
     with client() as test_client:
         response = test_client.post("/api/system/open-folder")

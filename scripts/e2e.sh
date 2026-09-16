@@ -18,7 +18,7 @@ else
   PY="uv run --project $BACKEND_DIR python"
 fi
 
-WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/llmwiki-e2e.XXXXXX")"
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/atlaswiki-e2e.XXXXXX")"
 VAULT_DIR="$WORK_DIR/vault"
 CONFIG_DIR="$WORK_DIR/config"
 APP_LOG="$WORK_DIR/app.log"
@@ -78,7 +78,7 @@ PYEOF
 step "启动 mock LLM（端口 ${LLM_PORT}）与应用服务（端口 ${APP_PORT}）"
 ( cd "$BACKEND_DIR" && exec "$PY" "$SCRIPT_DIR/e2e_mock_llm.py" --port "$LLM_PORT" ) >"$LLM_LOG" 2>&1 &
 LLM_PID=$!
-( cd "$BACKEND_DIR" && LLMWIKI_CONFIG_DIR="$CONFIG_DIR" exec "$PY" -m uvicorn llmwiki.main:app --host 127.0.0.1 --port "$APP_PORT" --log-level warning ) >"$APP_LOG" 2>&1 &
+( cd "$BACKEND_DIR" && ATLASWIKI_CONFIG_DIR="$CONFIG_DIR" exec "$PY" -m uvicorn atlaswiki.main:app --host 127.0.0.1 --port "$APP_PORT" --log-level warning ) >"$APP_LOG" 2>&1 &
 APP_PID=$!
 
 API="http://127.0.0.1:$APP_PORT/api"

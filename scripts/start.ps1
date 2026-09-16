@@ -1,4 +1,4 @@
-# LLM Wiki 启动脚本（Windows PowerShell）
+# AtlasWiki 启动脚本（Windows PowerShell）
 $ErrorActionPreference = "Stop"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -13,6 +13,6 @@ if (-not (Test-Path (Join-Path $FrontendDist "index.html"))) {
     exit 1
 }
 
-Write-Host "🚀 启动 LLM Wiki..."
+Write-Host "🚀 启动 AtlasWiki..."
 Set-Location $BackendDir
-uv run llmwiki
+uv run atlaswiki

@@ -10,11 +10,11 @@ from typing import Any
 import httpx
 import pytest
 
-from llmwiki.config import Settings, config_store
-from llmwiki.jobs import Job, JobQueue, job_queue
-from llmwiki.lint import LintScanner, LintService
-from llmwiki.lint.store import read_report, report_path
-from llmwiki.workspace.store import PageDraft, WikiStore
+from atlaswiki.config import Settings, config_store
+from atlaswiki.jobs import Job, JobQueue, job_queue
+from atlaswiki.lint import LintScanner, LintService
+from atlaswiki.lint.store import read_report, report_path
+from atlaswiki.workspace.store import PageDraft, WikiStore
 
 
 class FakeConfigStore:
@@ -218,7 +218,7 @@ async def api_client(vault: Path) -> AsyncIterator[httpx.AsyncClient]:
 
 
 def _app() -> Any:
-    from llmwiki.main import app
+    from atlaswiki.main import app
 
     return app
 

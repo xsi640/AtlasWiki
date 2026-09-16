@@ -1,10 +1,10 @@
-# LLM Wiki
+# AtlasWiki
 
 [简体中文](docs/README.zh-CN.md)
 
-LLM Wiki is a local-first knowledge compiler. It turns web pages, PDFs, and notes into a structured Markdown wiki, then lets you explore that knowledge through cited Q&A, graph navigation, change review, source management, and quality checks.
+AtlasWiki is a local-first knowledge compiler. It turns web pages, PDFs, and notes into a structured Markdown wiki, then lets you explore that knowledge through cited Q&A, graph navigation, change review, source management, and quality checks.
 
-Your data and API keys stay local by default. Each knowledge base is an independent Markdown and Git repository, making LLM Wiki well suited to research, durable team knowledge, and traceable AI-assisted writing.
+Your data and API keys stay local by default. Each knowledge base is an independent Markdown and Git repository, making AtlasWiki well suited to research, durable team knowledge, and traceable AI-assisted writing.
 
 ## Key capabilities
 
@@ -71,8 +71,8 @@ Open `http://127.0.0.1:8765`. If that port is occupied, the app selects the next
 
 ## Configuration and data
 
-- App settings live in `%APPDATA%/llmwiki/settings.json` on Windows and `~/Library/Application Support/llmwiki/` on macOS.
-- Set `LLMWIKI_CONFIG_DIR` to override the configuration location for testing or isolated runs.
+- App settings live in `%APPDATA%/atlaswiki/settings.json` on Windows and `~/Library/Application Support/atlaswiki/` on macOS.
+- Set `ATLASWIKI_CONFIG_DIR` to override the configuration location for testing or isolated runs. Existing LLM Wiki settings are discovered automatically for backward compatibility.
 - API keys are kept outside the repository and should never be committed.
 - A vault is an independent Git repository. Automatic commits and a remote can be configured in Settings.
 

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from llmwiki.errors import AppError, ErrorCode
-from llmwiki.ingest.service import SourceService
-from llmwiki.workspace.store import WikiStore
+from atlaswiki.errors import AppError, ErrorCode
+from atlaswiki.ingest.service import SourceService
+from atlaswiki.workspace.store import WikiStore
 
 
 @pytest.fixture
