@@ -41,3 +41,4 @@ htmlcov/
 # 本机私有文件（含 API key 与本机路径，绝不入库）
 /config.yaml
 /.workbuddy-ai/
+/.atlaswiki/

@@ -71,8 +71,8 @@ Open `http://127.0.0.1:8765`. If that port is occupied, the app selects the next
 
 ## Configuration and data
 
-- App settings live in `%APPDATA%/atlaswiki/settings.json` on Windows and `~/Library/Application Support/atlaswiki/` on macOS.
-- Set `ATLASWIKI_CONFIG_DIR` to override the configuration location for testing or isolated runs. Existing LLM Wiki settings are discovered automatically for backward compatibility.
+- App settings live in `.atlaswiki/settings.json` at the repository root and are excluded from Git.
+- Set `ATLASWIKI_CONFIG_DIR` to override the configuration location for containers, CI, testing, or isolated runs. Existing system-level LLM Wiki settings are read only when no project-local settings exist; the next save writes to `.atlaswiki/`.
 - API keys are kept outside the repository and should never be committed.
 - A vault is an independent Git repository. Automatic commits and a remote can be configured in Settings.
 

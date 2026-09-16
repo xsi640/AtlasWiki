@@ -71,8 +71,8 @@ pwsh -File scripts/start.ps1
 
 ## 配置与数据
 
-- 应用设置：Windows 为 `%APPDATA%/atlaswiki/settings.json`；macOS 为 `~/Library/Application Support/atlaswiki/`。
-- 使用 `ATLASWIKI_CONFIG_DIR` 可覆盖配置目录，适合测试或隔离环境；旧版 LLM Wiki 配置会被自动识别，保证升级兼容。
+- 应用设置位于项目根目录的 `.atlaswiki/settings.json`，并已排除在 Git 之外。
+- 使用 `ATLASWIKI_CONFIG_DIR` 可覆盖配置目录，适合容器、CI、测试或隔离环境。仅当项目本地配置不存在时才读取旧版系统级 LLM Wiki 配置；下次保存会写入 `.atlaswiki/`。
 - API Key 不写入项目文件，也不应提交到版本控制。
 - Vault 是独立 Git 仓库；可在设置中启用自动提交和配置远端同步。
 

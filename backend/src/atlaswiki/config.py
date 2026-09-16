@@ -11,24 +11,26 @@ from pydantic import BaseModel, Field
 
 
 def _app_config_dir() -> Path:
-    """返回 AtlasWiki 配置目录，并兼容旧版 LLM Wiki 配置。"""
+    """返回配置目录：显式环境变量优先，其次是项目本地目录。"""
     override = os.environ.get("ATLASWIKI_CONFIG_DIR", "").strip()
     if override:
         return Path(override).expanduser()
     legacy_override = os.environ.get("LLMWIKI_CONFIG_DIR", "").strip()
     if legacy_override:
         return Path(legacy_override).expanduser()
+    # config.py 位于 <project>/backend/src/atlaswiki/ 下。
+    return Path(__file__).resolve().parents[3] / ".atlaswiki"
+
+
+def _legacy_settings_path() -> Path:
+    """返回改名前的系统级设置路径，仅用于读取兼容。"""
     if sys.platform == "win32":
         base = os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")
     elif sys.platform == "darwin":
         base = Path.home() / "Library" / "Application Support"
     else:
         base = os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")
-    atlas_dir = Path(base) / "atlaswiki"
-    legacy_dir = Path(base) / "llmwiki"
-    if not (atlas_dir / "settings.json").exists() and (legacy_dir / "settings.json").exists():
-        return legacy_dir
-    return atlas_dir
+    return Path(base) / "llmwiki" / "settings.json"
 
 
 class LlmSettings(BaseModel):
@@ -68,6 +70,7 @@ class ConfigStore:
     def __init__(self, config_dir: Path | None = None) -> None:
         self._dir = config_dir or _app_config_dir()
         self._path = self._dir / "settings.json"
+        self._legacy_path = None if config_dir is not None else _legacy_settings_path()
         self._cache: Settings | None = None
 
     @property
@@ -77,9 +80,12 @@ class ConfigStore:
     def load(self) -> Settings:
         if self._cache is not None:
             return self._cache
-        if self._path.exists():
+        source_path = self._path
+        if not source_path.exists() and self._legacy_path and self._legacy_path.exists():
+            source_path = self._legacy_path
+        if source_path.exists():
             try:
-                data = json.loads(self._path.read_text("utf-8"))
+                data = json.loads(source_path.read_text("utf-8"))
                 self._cache = Settings.model_validate(data)
             except Exception:
                 self._cache = Settings()
