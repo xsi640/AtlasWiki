@@ -227,3 +227,53 @@ mark { background: var(--primary-soft); color: var(--primary); border-radius: 3p
 @media (max-width: 1151px) {
   .table-scroll table { min-width: 720px; }
 }
+
+/* Application shell and page primitives.  These names are used by the React
+   application; keep them here rather than relying on the earlier design-only
+   .topbar/.container examples above. */
+.app-shell { min-height: 100vh; background: var(--bg); }
+.app-header { height: var(--topbar-h); display: flex; align-items: center; gap: var(--sp-6); padding: 0 var(--sp-8); border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+.app-title { font-size: var(--fs-h3); font-weight: 650; letter-spacing: .1px; white-space: nowrap; }
+.app-nav { display: flex; gap: var(--sp-1); align-items: center; overflow-x: auto; }
+.nav-link { color: var(--text-2); text-decoration: none; font-size: var(--fs-sm); padding: 6px 12px; border-radius: var(--r-sm); white-space: nowrap; }
+.nav-link:hover { background: var(--bg-subtle); color: var(--text); }
+.nav-link.active { background: var(--primary-soft); color: var(--primary); }
+.app-main { width: min(100%, var(--container)); margin: 0 auto; padding: var(--sp-8) var(--gutter); }
+.page { max-width: 960px; }
+.page-header { margin-bottom: var(--sp-6); }
+.page-header h1 { margin: 0; font-size: var(--fs-display); letter-spacing: -.3px; }
+.page-subtitle { margin: var(--sp-1) 0 0; color: var(--text-2); }
+
+.btn-primary, .btn-secondary { min-height: 34px; padding: 6px 14px; border-radius: var(--r-sm); font: inherit; font-size: var(--fs-sm); cursor: pointer; }
+.btn-primary { border: 1px solid var(--primary); background: var(--primary); color: var(--primary-text); }
+.btn-secondary { border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+button:disabled { cursor: not-allowed; opacity: .55; }
+.ask-bar, .search-bar { display: flex; gap: var(--sp-3); align-items: flex-end; max-width: 760px; }
+.ask-input, .search-input { flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); color: var(--text); padding: 10px 12px; font: inherit; }
+.ask-input:focus, .search-input:focus, .form-row input:focus { outline: 2px solid var(--primary-border); border-color: var(--primary); }
+.empty-state { margin-top: var(--sp-6); padding: var(--sp-8); border: 1px dashed var(--border-strong); border-radius: var(--r-lg); background: var(--bg-subtle); color: var(--text-2); text-align: center; }
+.empty-state p { margin: var(--sp-1) 0; }
+.empty-state a, .back-link, .card-link { color: var(--primary); }
+.job-banner { margin-bottom: var(--sp-5); padding: var(--sp-3) var(--sp-4); display: flex; justify-content: space-between; border-radius: var(--r-md); background: var(--primary-soft); color: var(--primary); }
+.answer-section { max-width: 760px; margin-top: var(--sp-6); padding: var(--sp-5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); }
+.answer-meta, .meta-item, .result-count { color: var(--text-2); font-size: var(--fs-meta); }
+.answer-content { white-space: pre-wrap; }
+.text-danger { color: var(--danger); }
+.card-list { margin: var(--sp-4) 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.card-item { padding: var(--sp-4); border-bottom: 1px solid var(--border); }
+.card-item:last-child { border-bottom: 0; }
+.card-link { display: block; text-decoration: none; }
+.search-snippet { margin: var(--sp-2) 0 0; color: var(--text-2); }
+.form-row { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--sp-3); align-items: center; margin: var(--sp-4) 0; max-width: 720px; }
+.form-row label { color: var(--text-2); font-size: var(--fs-meta); }
+.form-row input { width: 100%; min-height: 34px; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 6px 10px; background: var(--surface); color: var(--text); font: inherit; }
+.save-message { color: var(--success); }
+
+@media (max-width: 640px) {
+  .app-header { gap: var(--sp-3); padding: 0 var(--sp-4); }
+  .app-nav { gap: 0; }
+  .nav-link { padding: 6px 9px; }
+  .app-main { padding: var(--sp-6) var(--sp-4); }
+  .ask-bar, .search-bar { align-items: stretch; flex-direction: column; }
+  .form-row { grid-template-columns: 1fr; gap: var(--sp-1); }
+}

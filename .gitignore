@@ -9,7 +9,7 @@ build/
 
 # Node
 node_modules/
-code/frontend/dist/
+frontend/dist/
 
 # IDE
 .idea/

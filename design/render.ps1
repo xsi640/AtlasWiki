@@ -1,5 +1,5 @@
 # 重新渲染设计图
-# 用法：在 code/design 目录下执行  pwsh -File render.ps1
+# 用法：在 design 目录下执行 pwsh -File render.ps1
 # 依赖：本机安装 Chrome 或 Edge
 # 说明：tokens.css 是唯一的设计 token 来源；每个页面一个 HTML，通过 ?theme=light|dark 切主题。
 

@@ -8,8 +8,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-BACKEND_DIR="$REPO_ROOT/code/backend"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BACKEND_DIR="$REPO_ROOT/backend"
 
 # --- Python 解释器：优先用已建好的 venv，其次退回 uv run ---
 if [ -x "$BACKEND_DIR/.venv/bin/python" ]; then
