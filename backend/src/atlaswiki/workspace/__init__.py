@@ -8,6 +8,7 @@ from .store import (
     PageDraft,
     WikiStore,
     atomic_write_bytes,
+    fsync_directory,
     serialize_markdown,
 )
 from .vault import VAULT_DIRECTORIES, create_vault, ensure_inside_vault, safe_relative_path
@@ -26,6 +27,7 @@ __all__ = [
     "create_vault",
     "ensure_inside_vault",
     "extract_links",
+    "fsync_directory",
     "safe_relative_path",
     "serialize_markdown",
 ]

@@ -11,6 +11,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from atlaswiki.workspace.store import fsync_directory
+
 
 def utc_now() -> str:
     """返回 ISO8601 UTC 时间。"""
@@ -68,11 +70,7 @@ class QueryStore:
                 stream.flush()
                 os.fsync(stream.fileno())
             os.replace(temporary, self.path)
-            directory_fd = os.open(self.path.parent, os.O_RDONLY)
-            try:
-                os.fsync(directory_fd)
-            finally:
-                os.close(directory_fd)
+            fsync_directory(self.path.parent)
         finally:
             temporary.unlink(missing_ok=True)
 

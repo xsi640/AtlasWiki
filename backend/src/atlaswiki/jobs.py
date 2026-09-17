@@ -115,7 +115,7 @@ class JobQueue:
         self._jobs[job.id] = job
         await self._persist()
         await self._queue.put((job, func))
-        await self._publish(self._job_event(job, "job.progress"))
+        await self._publish(self.job_event(job, "job.progress"))
         self._ensure_worker()
         return job
 
@@ -167,7 +167,7 @@ class JobQueue:
             current.detail = detail
 
         await self._persist()
-        await self._publish(self._job_event(current, "job.progress"))
+        await self._publish(self.job_event(current, "job.progress"))
 
     async def publish(self, event: str, **payload: Any) -> None:
         """向所有 SSE 订阅者广播业务事件（例如 lint.ready）。"""
@@ -192,7 +192,7 @@ class JobQueue:
         job_id = self.current_job_id
         if job_id is None:
             return None
-        return self._job_event(self._jobs[job_id], "job.progress")
+        return self.job_event(self._jobs[job_id], "job.progress")
 
     def restore(self) -> None:
         """强制从 jobs.json 恢复任务状态。"""
@@ -290,7 +290,7 @@ class JobQueue:
             job.status = JobStatus.RUNNING
             job.started_at = time.time()
             await self._persist()
-            await self._publish(self._job_event(job, "job.progress"))
+            await self._publish(self.job_event(job, "job.progress"))
             try:
                 await func(job)
                 job.status = JobStatus.DONE
@@ -298,19 +298,27 @@ class JobQueue:
                 job.done = job.total
                 job.detail = job.detail or "completed"
                 await self._persist()
-                await self._publish(self._job_event(job, "job.done"))
+                await self._publish(self.job_event(job, "job.done"))
             except Exception as exc:
                 job.status = JobStatus.FAILED
                 job.error = str(exc) or exc.__class__.__name__
                 await self._persist()
-                await self._publish(self._job_event(job, "job.failed"))
+                await self._publish(self.job_event(job, "job.failed"))
             finally:
                 job.finished_at = time.time()
                 await self._persist()
                 self._queue.task_done()
 
     @staticmethod
-    def _job_event(job: Job, event: str) -> dict:
+    def job_event(job: Job, event: str) -> dict:
+        """构造任务事件；固定携带围观页所需的快照字段。
+
+        `current_source` / `current_page` / `steps` 来自 job.meta（由编译引擎维护并
+        随 jobs.json 持久化）。放进事件里，围观页才能不靠轮询就把步骤条和当前素材
+        更新到最新；字段名与 /api/compile/current 的快照保持一致。
+        """
+
+        meta = job.meta or {}
         return {
             "event": event,
             "job_id": job.id,
@@ -321,6 +329,9 @@ class JobQueue:
             "done": job.done,
             "detail": job.detail,
             "error": job.error,
+            "current_source": meta.get("current_source"),
+            "current_page": meta.get("current_page"),
+            "steps": meta.get("steps", []),
         }
 
     async def _publish(self, event: dict) -> None:

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import re
 from enum import StrEnum
-from pathlib import Path
 
 
 class PageType(StrEnum):
@@ -92,18 +91,9 @@ def validate_page_frontmatter(fm: dict) -> list[str]:
 
 # ---------------------------------------------------------------------------
 # 提示词模板
+# 全部为内联常量。此前的 load_prompt()/_PROMPTS_DIR 指向并不存在的
+# schema/prompts/ 目录，任何调用都会 FileNotFoundError，故一并移除。
 # ---------------------------------------------------------------------------
-
-_PROMPTS_DIR = Path(__file__).parent / "prompts"
-
-
-def load_prompt(name: str) -> str:
-    """加载提示词模板（ingest / query / lint）。"""
-    path = _PROMPTS_DIR / f"{name}.md"
-    if not path.exists():
-        raise FileNotFoundError(f"提示词模板不存在: {path}")
-    return path.read_text("utf-8")
-
 
 INGEST_PROMPT = """\
 你是知识编译引擎。根据素材原文，生成或更新 wiki 页面。
@@ -133,20 +123,6 @@ QUERY_PROMPT = """\
 
 规则：
 - 综合多个页面作答，引用用 [[页面名]] 格式
-- 知识不足时 insufficient=true，不要编造
+- 知识不足时把 sufficient 设为 false，不要编造
 - 回答使用简体中文
-"""
-
-LINT_PROMPT = """\
-你是知识库体检引擎。根据以下 wiki 页面信息，检测问题。
-
-页面列表：
-{pages}
-
-输出 JSON（不要 markdown 代码块）：
-{{
-  "issues": [
-    {{"kind": "contradiction|orphan|dead_link|missing_index|zone_mix", "page": "...", "detail": "...", "suggestion": "..."}}
-  ]
-}}
 """

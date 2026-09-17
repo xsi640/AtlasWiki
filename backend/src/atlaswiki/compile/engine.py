@@ -651,18 +651,17 @@ class CompileEngine:
 
         self._advance_steps(job, step)
         job.meta["current_source"] = {"id": source.source_id, "title": source.title}
-        await self._queue.publish(
-            "job.progress",
-            job_id=job.id,
-            kind=job.kind,
-            status=job.status.value,
-            progress=job.progress,
-            total=job.total,
-            done=job.done,
-            detail=f"{source.title} · {step}",
-            source_id=source.source_id,
-            step=step,
+        # 复用队列的事件构造，保证步骤事件也带上 current_source/current_page/steps，
+        # 围观页无需等下一次快照即可更新步骤条。
+        payload = self._queue.job_event(job, "job.progress")
+        payload.update(
+            {
+                "detail": f"{source.title} · {step}",
+                "source_id": source.source_id,
+                "step": step,
+            }
         )
+        await self._queue.publish(**payload)
 
     @classmethod
     def _advance_steps(cls, job: Job, step: str) -> None:

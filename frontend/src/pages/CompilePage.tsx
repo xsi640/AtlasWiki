@@ -63,6 +63,10 @@ function normalizeStep(value: unknown, index: number): JobStep {
 /**
  * SSE 只提供 JobSnapshot 的精简载荷。合并旧快照可以避免
  * 缺省字段把界面短暂清空，同时保留服务端明确给出的最新值。
+ *
+ * 字段命名差异：任务事件的线格式用 `total`/`done`（见 jobs.py 的 job_event），
+ * 而围观页快照用 `total_sources`/`done_sources`。两种都接受，否则事件里的进度
+ * 会被当成缺省值而沿用旧快照，进度条在终态前后会来回跳。
  */
 function mergeSnapshot(previous: JobSnapshot | null, payload: unknown): JobSnapshot {
   const value = isRecord(payload) ? payload : {};
@@ -79,8 +83,14 @@ function mergeSnapshot(previous: JobSnapshot | null, payload: unknown): JobSnaps
     job_id: nullableText(value.job_id, previous?.job_id ?? null),
     status,
     kind: text(value.kind, previous?.kind ?? "compile"),
-    total_sources: Math.max(0, finiteNumber(value.total_sources, previous?.total_sources ?? 0)),
-    done_sources: Math.max(0, finiteNumber(value.done_sources, previous?.done_sources ?? 0)),
+    total_sources: Math.max(
+      0,
+      finiteNumber(value.total_sources ?? value.total, previous?.total_sources ?? 0),
+    ),
+    done_sources: Math.max(
+      0,
+      finiteNumber(value.done_sources ?? value.done, previous?.done_sources ?? 0),
+    ),
     current_source: "current_source" in value
       ? normalizeSource(value.current_source)
       : previous?.current_source ?? null,
@@ -150,6 +160,10 @@ export function CompilePage() {
   const { connected } = useEventStream(
     useCallback(
       (event: SseEvent) => {
+        // 写入队列是全局串行的，问答/体检等任务同样会广播 job.progress；
+        // 围观页只关心编译任务（/compile/current 也只返回 kind=compile 的任务）。
+        if (typeof event.kind === "string" && event.kind !== "compile") return;
+
         if (event.event === "job.progress") {
           setJob((current) => {
             const next = mergeSnapshot(current, event);

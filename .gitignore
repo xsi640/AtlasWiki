@@ -42,3 +42,6 @@ htmlcov/
 /config.yaml
 /.workbuddy-ai/
 /.atlaswiki/
+
+# 本机临时草稿
+/.tmp/

@@ -141,7 +141,7 @@ class AskEngine:
 
     @staticmethod
     def _parse_llm_output(output: str) -> tuple[str, bool, list[dict[str, str]]]:
-        """兼容 JSON 与纯文本；JSON 可携带 insufficient / related_pages。"""
+        """兼容 JSON 与纯文本；JSON 可携带 sufficient / related_pages。"""
 
         text = output.strip()
         if text.startswith("```"):
@@ -153,6 +153,8 @@ class AskEngine:
         if not isinstance(payload, dict):
             return text, "知识不足" not in text, []
         answer = str(payload.get("answer") or payload.get("content") or "").strip()
+        # 权威字段是 sufficient（QUERY_PROMPT 与 JSON 指令都要求它）；
+        # 仍接受反义旧写法 insufficient，避免历史提示词或模型旧习惯失效。
         sufficient = bool(payload.get("sufficient", not payload.get("insufficient", False)))
         related: list[dict[str, str]] = []
         for item in payload.get("related_pages", []):

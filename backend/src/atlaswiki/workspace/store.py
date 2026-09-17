@@ -78,6 +78,24 @@ class PageDraft:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
+def fsync_directory(path: Path) -> None:
+    """尽力持久化目录项；平台不支持时静默跳过。
+
+    POSIX 允许以只读方式 os.open 目录后 fsync，Windows 则一律抛 EACCES
+    （os.open 打不开目录）。若不做容错，Windows 上每次写入都会在
+    os.replace 已经成功之后抛异常，调用方会误判为写入失败。
+    """
+
+    try:
+        directory_fd = os.open(path, os.O_RDONLY)
+    except OSError:
+        return
+    try:
+        os.fsync(directory_fd)
+    finally:
+        os.close(directory_fd)
+
+
 def atomic_write_bytes(target: Path, data: bytes) -> None:
     """同目录临时文件 + fsync + os.replace，目标文件永远不会出现半截内容。"""
 
@@ -95,11 +113,7 @@ def atomic_write_bytes(target: Path, data: bytes) -> None:
             os.fsync(stream.fileno())
         os.replace(temporary_path, target)
         # 目录项也需要持久化，极端断电场景下 replace 才可靠。
-        directory_fd = os.open(target.parent, os.O_RDONLY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
+        fsync_directory(target.parent)
     except BaseException:
         temporary_path.unlink(missing_ok=True)
         raise

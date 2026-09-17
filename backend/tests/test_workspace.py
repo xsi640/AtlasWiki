@@ -14,6 +14,7 @@ from atlaswiki.workspace import (
     WikiStore,
     create_vault,
     extract_links,
+    fsync_directory,
     safe_relative_path,
 )
 
@@ -144,3 +145,17 @@ def test_reject_illegal_paths(path: str) -> None:
         safe_relative_path(path)
 
     assert exc_info.value.code == ErrorCode.PATH_OUT_OF_VAULT
+
+
+def test_fsync_directory_tolerates_unopenable_directory(tmp_path: Path) -> None:
+    """目录 fsync 在不支持它的平台上必须静默跳过。
+
+    Windows 上 os.open 无法打开目录（EACCES），此前 atomic_write_bytes 会在
+    os.replace 已成功之后抛 PermissionError，导致每次写入都被误判为失败。
+    """
+
+    # 不存在的路径在 POSIX 与 Windows 上都会抛 OSError，助手不能向外传播。
+    fsync_directory(tmp_path / "missing")
+
+    # 存在的目录在任何平台都不应抛异常。
+    fsync_directory(tmp_path)

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
+import { useEventStream } from "../hooks/useEventStream";
 import type { LintReport, LintKind } from "../api/types";
 
 const KIND_LABELS: Record<LintKind, string> = {
@@ -21,6 +22,14 @@ export function LintPage() {
     api.get<LintReport>("/lint/report").then(setReport).catch(() => setReport(null));
   };
   useEffect(load, []);
+
+  // 体检在写入队列里异步执行：POST /lint/run 返回时报告仍是旧的。
+  // lint.ready 是报告落盘的信号，收到后再取一次才是本次结果。
+  useEventStream((event) => {
+    if (event.event === "lint.ready") {
+      load();
+    }
+  });
 
   const runLint = async () => {
     setRunning(true);

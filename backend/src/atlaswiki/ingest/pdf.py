@@ -108,7 +108,7 @@ def _failed_document(
         "content": content,
         "content_editable": False,
         "failure_reason": reason,
-        "asset_path": str(asset_relative_path),
+        "asset_path": asset_relative_path.as_posix(),
     }
 
 
@@ -147,7 +147,7 @@ def _import_pdf_sync(
         "kind": MaterialKind.PDF.value,
         "source_url": None,
         "tags": _unique_tags(tags),
-        "asset_path": str(asset_relative_path),
+        "asset_path": asset_relative_path.as_posix(),
     }
 
     try:
@@ -194,7 +194,7 @@ def _import_pdf_sync(
         "content": content,
         "content_editable": False,
         "failure_reason": None,
-        "asset_path": str(asset_relative_path),
+        "asset_path": asset_relative_path.as_posix(),
     }
 
 
